@@ -8,7 +8,7 @@ const basename = path.basename(__filename);
 const env = CONSTANTS.NODE_ENV;
 const config = require('./../../database.js')[env];
 const db = {};
-
+console.log(config);
 let dialectOptions = {};
 
 if (CONSTANTS.IS_PROD_ENV) {
@@ -26,7 +26,8 @@ const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWO
   port: config.DB_PORT,
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
-  pool: config.pool
+  pool: config.pool,
+  dialectOptions
 });
 
 fs

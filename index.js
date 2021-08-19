@@ -55,16 +55,16 @@ async function setupCore() {
   console.log('BUCKETS INITIALIZED');
   
   console.log('CONNECTING DB');
-  await db.sequelize.authenticate()
-  console.log('DB AUTHENTICATED');
-
   if (CONSTANTS.IS_PROD_ENV) {
     await sequelizeMigrate.migrate({
       sequelize: db.sequelize,
       SequelizeImport: db.Sequelize,
       migrationsDir: './db_scripts/migrations/'
     });
+  } else {
+    await db.sequelize.authenticate();
   }
-
+  console.log('DB AUTHENTICATED');
+  
   return;
 }

@@ -16,7 +16,6 @@ CONSTANTS.DB_PASSWORD = process.env.DB_PASSWORD || 'default';
 CONSTANTS.DB_NAME = process.env.DB_NAME || 'recipes';
 CONSTANTS.DB_CA_CERT = process.env.DB_CA_CERT || '';
 
-console.log(CONSTANTS);
 if (CONSTANTS.IS_PROD_ENV && !CONSTANTS.DB_CA_CERT) {
   throw new Error('Missing DB Certificate');
 }
