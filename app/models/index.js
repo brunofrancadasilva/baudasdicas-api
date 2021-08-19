@@ -12,10 +12,13 @@ const db = {};
 let dialectOptions = {};
 
 if (CONSTANTS.IS_PROD_ENV) {
+  const CA = fs.readFileSync('./ca-certificate.cer').toString();
+  console.log(CA);
+  
   dialectOptions = { 
     ssl: { 
       rejectUnauthorized: false, 
-      ca: fs.readFileSync('./ca-certificate.cer').toString() 
+      ca: CA
     } 
   };
 }
