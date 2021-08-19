@@ -54,6 +54,7 @@ async function setupCore() {
   await storageService.setupBuckets();
   console.log('BUCKETS INITIALIZED');
   
+  console.log('CONNECTING DB');
   await db.sequelize.authenticate()
   console.log('DB AUTHENTICATED');
 
