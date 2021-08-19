@@ -9,12 +9,17 @@ const env = CONSTANTS.NODE_ENV;
 const config = require('./../../database.js')[env];
 const db = {};
 
-const sequelize = new Sequelize(`postgresql://dev-user:wgksu5mjdburvox6@db-recipes-dev-do-user-9710968-0.b.db.ondigitalocean.com:25060/recipes`, {
+console.log(CONSTANTS);
+console.log(config);
+const sequelize = new Sequelize(CONSTANTS.DB_NAME, CONSTANTS.DB_USER, CONSTANTS.PASSWORD, {
+  host: CONSTANTS.DB_HOST,
+  port: CONSTANTS.DB_PORT,
+  dialect: config.dialect,
   isolationLevel: config.isolationLevel,
   pool: config.pool,
   dialectOptions: {
    ssl: {
-    rejectUnauthorized: false
+     rejectUnauthorized: false
    }
   }
 });

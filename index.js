@@ -22,7 +22,7 @@ new ApiManager(app);
 
 // initialize database
 const PORT = CONSTANTS.PORT;
-
+console.log('AUTHENTICATING');
 db.sequelize.authenticate()
   .then(() => {
     console.log('DB CONNECTED');
