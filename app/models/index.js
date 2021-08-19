@@ -22,7 +22,7 @@ if (CONSTANTS.IS_PROD_ENV) {
     } 
   };
 }
-const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.PASSWORD, {
+const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWORD, {
   host: config.DB_HOST,
   port: config.DB_PORT,
   dialect: config.dialect,
