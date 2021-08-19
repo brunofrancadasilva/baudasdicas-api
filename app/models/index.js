@@ -14,7 +14,10 @@ const sequelize = new Sequelize(CONSTANTS.DB_NAME, CONSTANTS.DB_USER, CONSTANTS.
   port: CONSTANTS.DB_PORT,
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
-  pool: config.pool
+  pool: config.pool,
+  dialectOptions: {
+   ssl: true 
+  }
 });
 
 fs
