@@ -9,11 +9,25 @@ const env = CONSTANTS.NODE_ENV;
 const config = require('./../../database.js')[env];
 const db = {};
 
-const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.PASSWORD, {
+let dialectOptions = {};
+
+if (CONSTANTS.IS_PROD_ENV) {
+  const CA = CONSTANTS.DB_CA_CERT;
+  
+  dialectOptions = { 
+    ssl: { 
+      rejectUnauthorized: false, 
+      ca: CA
+    } 
+  };
+}
+const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWORD, {
   host: config.DB_HOST,
+  port: config.DB_PORT,
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
-  pool: config.pool
+  pool: config.pool,
+  dialectOptions
 });
 
 fs
