@@ -1,6 +1,6 @@
 'use strict';
 const CONSTANTS = require('./constants');
-
+console.log('db.js', CONSTANTS);
 const db = {
   DB_HOST: CONSTANTS.DB_HOST,
   DB_USER: CONSTANTS.DB_USER,

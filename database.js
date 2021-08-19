@@ -2,6 +2,7 @@
 
 const CONSTANTS = require('./app/config/constants');
 
+console.log('databse.js', CONSTANTS);
 module.exports = {
   development: {
     DB_USER: CONSTANTS.DB_USER,
