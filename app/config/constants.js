@@ -4,16 +4,16 @@ const Sequelize = require('sequelize');
 const CONSTANTS = {};
 
 // server config
-CONSTANTS.PORT = process.env.PORT || 3001;
+CONSTANTS.PORT = process.env.PORT || 8080;
 CONSTANTS.NODE_ENV = process.env.NODE_ENV || 'development';
 CONSTANTS.IS_PROD_ENV = CONSTANTS.NODE_ENV  === 'production';
 
 // database config
-CONSTANTS.DB_HOST = 'db-recipes-dev-do-user-9710968-0.b.db.ondigitalocean.com';
-CONSTANTS.DB_PORT = '25060';
-CONSTANTS.DB_USER = 'dev-user';
-CONSTANTS.DB_PASSWORD = 'wgksu5mjdburvox6';
-CONSTANTS.DB_NAME = 'recipes';
+CONSTANTS.DB_HOST = process.env.DB_HOST || 'localhost';
+CONSTANTS.DB_PORT = process.env.DB_PORT || '5432';
+CONSTANTS.DB_USER = process.env.DB_USER || 'postgres';
+CONSTANTS.DB_PASSWORD = process.env.DB_PASSWORD || 'default';
+CONSTANTS.DB_NAME = process.env.DB_NAME || 'recipes';
 CONSTANTS.DB_ISOLATION_LEVEL = Sequelize.Transaction.ISOLATION_LEVELS.REPEATABLE_READ;
 
 // auth config
@@ -32,6 +32,6 @@ if (!CONSTANTS.IS_PROD_ENV) {
   CONSTANTS.STORAGE_SECRET = 'P/uyh12K7KlB+oXfzjWFyPjPhqvFuGC5BSOP/M64k3w';
 } 
 
-// Object.freeze(CONSTANTS);
+Object.freeze(CONSTANTS);
 
 module.exports = CONSTANTS;

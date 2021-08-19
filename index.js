@@ -22,10 +22,11 @@ new ApiManager(app);
 
 // initialize database
 const PORT = CONSTANTS.PORT;
-console.log('AUTHENTICATING');
-db.sequelize.authenticate()
+
+console.error('CONNECTING DB');
+setupCore()
   .then(() => {
-    console.log('DB CONNECTED');
+    console.error('CONNECTED');
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}.`);
     });
@@ -36,8 +37,8 @@ db.sequelize.authenticate()
 
 // initialize core features
 async function setupCore() {
-  // await storageService.setupBuckets();
-  await db.sequelize.authenticate();
-  
-  return Promise.resolve();
+  return Promise.all([
+    storageService.setupBuckets(),
+    db.sequelize.authenticate()
+  ]);
 }
