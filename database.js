@@ -13,7 +13,7 @@ module.exports = {
     schema: 'public',
     isolationLevel: CONSTANTS.DB_ISOLATION_LEVEL,
     pool: {
-      max: 25,
+      max: 22,
       min: 0,
       idle: 10000,
       acquire: 30000
@@ -29,7 +29,7 @@ module.exports = {
     schema: 'public',
     isolationLevel: CONSTANTS.DB_ISOLATION_LEVEL,
     pool: {
-      max: 25,
+      max: 22,
       min: 0,
       idle: 10000,
       acquire: 30000
