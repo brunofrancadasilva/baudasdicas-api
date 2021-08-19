@@ -14,6 +14,12 @@ CONSTANTS.DB_PORT = process.env.DB_PORT || '5432';
 CONSTANTS.DB_USER = process.env.DB_USER || 'postgres';
 CONSTANTS.DB_PASSWORD = process.env.DB_PASSWORD || 'default';
 CONSTANTS.DB_NAME = process.env.DB_NAME || 'recipes';
+CONSTANTS.DB_CA_CERT = process.env.DB_CA_CERT || '';
+
+if (CONSTANTS.IS_PROD_ENV && !CONSTANTS.DB_CA_CERT) {
+  throw new Error('Missing DB Certificate');
+}
+
 CONSTANTS.DB_ISOLATION_LEVEL = Sequelize.Transaction.ISOLATION_LEVELS.REPEATABLE_READ;
 
 // auth config

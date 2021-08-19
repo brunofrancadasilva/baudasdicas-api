@@ -12,7 +12,7 @@ const db = {};
 let dialectOptions = {};
 
 if (CONSTANTS.IS_PROD_ENV) {
-  const CA = fs.readFileSync('./ca-certificate.cer').toString();
+  const CA = CONSTANTS.DB_CA_CERT;
   
   dialectOptions = { 
     ssl: { 
@@ -26,7 +26,8 @@ const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWO
   port: config.DB_PORT,
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
-  pool: config.pool
+  pool: config.pool,
+  dialectOptions,
 });
 
 fs
