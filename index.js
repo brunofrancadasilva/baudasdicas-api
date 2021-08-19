@@ -24,8 +24,6 @@ new ApiManager(app);
 // initialize database
 const PORT = CONSTANTS.PORT;
 
-console.log(path.resolve('./', 'database.js'));
-
 setupCore()
   .then(() => {
     app.listen(PORT, () => {
