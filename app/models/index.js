@@ -8,7 +8,7 @@ const basename = path.basename(__filename);
 const env = CONSTANTS.NODE_ENV;
 const config = require('./../../database.js')[env];
 const db = {};
-console.log(config);
+
 let dialectOptions = {};
 
 if (CONSTANTS.IS_PROD_ENV) {

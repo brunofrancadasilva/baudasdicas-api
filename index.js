@@ -18,20 +18,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(morgan('dev'));
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Credentials', true);
-//   res.header('Access-Control-Allow-Origin', req.headers.origin);
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-//   res.header('Vary', 'Origin');
-//   res.header('Access-Control-Allow-Headers', 'Cookie, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Accept-Encoding, Authorization, Accept-Language');
+app.use(morgan('dev'));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Vary', 'Origin');
+  res.header('Access-Control-Allow-Headers', 'Cookie, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Accept-Encoding, Authorization, Accept-Language');
 
-//   if (req.method === 'OPTIONS') {
-//     res.sendStatus(200);
-//   } else {
-//     next();
-//   }
-// });
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
 
 // instanciate routes
 new ApiManager(app);
@@ -51,10 +51,6 @@ setupCore()
 
 // initialize core features
 async function setupCore() {
-  await storageService.setupBuckets();
-  console.log('BUCKETS INITIALIZED');
-  
-  console.log('CONNECTING DB');
   if (CONSTANTS.IS_PROD_ENV) {
     await sequelizeMigrate.migrate({
       sequelize: db.sequelize,
@@ -64,7 +60,7 @@ async function setupCore() {
   } else {
     await db.sequelize.authenticate();
   }
-  console.log('DB AUTHENTICATED');
   
-  return;
+
+  return storageService.setupBuckets();
 }
