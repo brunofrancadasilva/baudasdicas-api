@@ -2,7 +2,7 @@
 
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
+// const morgan = require('morgan');
 const CONSTANTS = require('./app/config/constants');
 const db = require('./app/models/index');
 const ApiManager = require('./app/managers/apiManager');
@@ -18,20 +18,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Vary', 'Origin');
-  res.header('Access-Control-Allow-Headers', 'Cookie, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Accept-Encoding, Authorization, Accept-Language');
+// app.use(morgan('dev'));
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Credentials', true);
+//   res.header('Access-Control-Allow-Origin', req.headers.origin);
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+//   res.header('Vary', 'Origin');
+//   res.header('Access-Control-Allow-Headers', 'Cookie, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Accept-Encoding, Authorization, Accept-Language');
 
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
+//   if (req.method === 'OPTIONS') {
+//     res.sendStatus(200);
+//   } else {
+//     next();
+//   }
+// });
 
 // instanciate routes
 new ApiManager(app);
