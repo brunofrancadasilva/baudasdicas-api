@@ -15,7 +15,7 @@ CONSTANTS.DB_USER = process.env.DB_USER || 'postgres';
 CONSTANTS.DB_PASSWORD = process.env.DB_PASSWORD || 'default';
 CONSTANTS.DB_NAME = process.env.DB_NAME || 'recipes';
 CONSTANTS.DB_ISOLATION_LEVEL = Sequelize.Transaction.ISOLATION_LEVELS.REPEATABLE_READ;
-console.log('constants.js', CONSTANTS);
+
 // auth config
 CONSTANTS.JWT_SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : '!R3c1p3sPr0j@';
 CONSTANTS.JWT_EXPIRATION = '24h';

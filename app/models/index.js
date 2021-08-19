@@ -9,8 +9,8 @@ const env = CONSTANTS.NODE_ENV;
 const config = require('./../../database.js')[env];
 const db = {};
 
-const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.PASSWORD, {
-  host: config.DB_HOST,
+const sequelize = new Sequelize(CONSTANTS.DB_NAME, CONSTANTS.DB_USER, CONSTANTS.PASSWORD, {
+  host: CONSTANTS.DB_HOST,
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
   pool: config.pool
