@@ -16,7 +16,13 @@ const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.PASSWORD,
   port: config.DB_PORT,
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
-  pool: config.pool
+  pool: config.pool,
+  dialectOptions: {
+    ssl: {
+      rejectUnauthorized: false,
+      ca: fs.readFileSync('./../../ca-certificate.cer').toString()
+    }
+  }
 });
 
 fs

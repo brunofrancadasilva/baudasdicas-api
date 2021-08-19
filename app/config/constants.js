@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const CONSTANTS = {};
 
 // server config
-CONSTANTS.PORT = process.env.PORT || 8080;
+CONSTANTS.PORT = process.env.PORT || 3001;
 CONSTANTS.NODE_ENV = process.env.NODE_ENV || 'development';
 CONSTANTS.IS_PROD_ENV = CONSTANTS.NODE_ENV  === 'production';
 
