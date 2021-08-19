@@ -37,8 +37,11 @@ setupCore()
 
 // initialize core features
 async function setupCore() {
-  return Promise.all([
-    storageService.setupBuckets(),
-    db.sequelize.authenticate()
-  ]);
+  await storageService.setupBuckets();
+  console.log('BUCKETS INITIALIZED');
+  
+  await db.sequelize.authenticate()
+  console.log('DB AUTHENTICATED');
+
+  return;
 }
