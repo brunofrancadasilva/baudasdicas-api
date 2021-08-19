@@ -8,9 +8,7 @@ const basename = path.basename(__filename);
 const env = CONSTANTS.NODE_ENV;
 const config = require('./../../database.js')[env];
 const db = {};
-console.error('CONNECTING DB');
-console.log('CONSTANTS', CONSTANTS);
-console.log('CONFIG', config);
+
 const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.PASSWORD, {
   host: config.DB_HOST,
   port: config.DB_PORT,
