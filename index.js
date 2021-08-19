@@ -6,6 +6,7 @@ const CONSTANTS = require('./app/config/constants');
 const db = require('./app/models/index');
 const ApiManager = require('./app/managers/apiManager');
 const storageService = new (require('./app/services/storageService'))();
+const sequelizeMigrate = require('./app/modules/sequelizeMigrate');
 
 const app = express();
 
@@ -42,6 +43,14 @@ async function setupCore() {
   
   await db.sequelize.authenticate()
   console.log('DB AUTHENTICATED');
+
+  if (CONSTANTS.IS_PROD_ENV) {
+    await sequelizeMigrate.migrate({
+      sequelize: db.sequelize,
+      SequelizeImport: db.Sequelize,
+      migrationsDir: './db_scripts/migrations/'
+    });
+  }
 
   return;
 }
