@@ -11,6 +11,7 @@ const db = {};
 
 const sequelize = new Sequelize(CONSTANTS.DB_NAME, CONSTANTS.DB_USER, CONSTANTS.PASSWORD, {
   host: CONSTANTS.DB_HOST,
+  port: CONSTANTS.DB_PORT,
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
   pool: config.pool
