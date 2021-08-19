@@ -23,16 +23,14 @@ new ApiManager(app);
 // initialize database
 const PORT = CONSTANTS.PORT;
 
-console.error('CONNECTING DB');
 setupCore()
   .then(() => {
-    console.error('CONNECTED');
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}.`);
     });
   }).catch(e => {
     console.log(e);
-    console.log('FAILED CONNECT DB');
+    console.log('FAILED TO CONNECT ON DB');
   });
 
 // initialize core features
