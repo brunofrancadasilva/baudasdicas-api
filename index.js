@@ -2,7 +2,7 @@
 
 const express = require('express');
 const cors = require('cors');
-// const morgan = require('morgan');
+const morgan = require('morgan');
 const CONSTANTS = require('./app/config/constants');
 const db = require('./app/models/index');
 const ApiManager = require('./app/managers/apiManager');
