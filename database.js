@@ -20,9 +20,9 @@ module.exports = {
     },
   },
   production: {
-    user: CONSTANTS.DB_USER,
+    username: CONSTANTS.DB_USER,
     password: CONSTANTS.DB_PASSWORD,
-    name: CONSTANTS.DB_NAME,
+    database: CONSTANTS.DB_NAME,
     host: CONSTANTS.DB_HOST,
     port: CONSTANTS.DB_PORT,
     dialect: 'postgres',
