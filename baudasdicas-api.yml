@@ -1,0 +1,59 @@
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+databases:
+- cluster_name: db-baudicas
+  db_name: recipes
+  db_user: recipesDbAppUser
+  engine: PG
+  name: db-baudicas
+  production: true
+  version: "13"
+domains:
+- domain: api.receitasbaudasdicas.com.br
+  type: PRIMARY
+name: baudasdicas-api
+region: nyc
+services:
+- environment_slug: node-js
+  envs:
+  - key: DB_CA_CERT
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:nVLIpy8OfSopi3KkeU256zEWvRV+hZA7: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]
+  - key: DB_HOST
+    scope: RUN_AND_BUILD_TIME
+    value: db-baudicas-do-user-9710968-0.b.db.ondigitalocean.com
+  - key: DB_PORT
+    scope: RUN_AND_BUILD_TIME
+    value: "25060"
+  - key: DB_NAME
+    scope: RUN_AND_BUILD_TIME
+    value: recipes
+  - key: DB_USER
+    scope: RUN_AND_BUILD_TIME
+    value: recipesDbAppUser
+  - key: DB_PASSWORD
+    scope: RUN_AND_BUILD_TIME
+    value: vg76kxn65s1ufb0j
+  - key: JWT_SECRET
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:9T+dx3FDkJvn3RcKLRpb/LfIF3/q7r2g:dziEZj49rYn+0GN3qlvFawYx08F4wu+16vDaGaJErahQcJrejs3SDZCfN8IyaXVOJ2j/jlJLWwjIR4UaZsMENaJJ3PyoyjPiPDevUW/E0Pc6r3au7xhDqG9jFT1WSmh6x//1VnBEs4gc3Mb2lTk3QVH5J0sCIhps9Go0PJVXWseGfwzVKBRTosnwX+gzOW7c]
+  - key: NODE_ENV
+    scope: RUN_AND_BUILD_TIME
+    value: production
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: brunofrancadasilva/baudasdicas-api
+  health_check:
+    http_path: /external/health
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: basic-s
+  name: baudasdicas-api
+  routes:
+  - path: /
+  run_command: node index.js
+  source_dir: /

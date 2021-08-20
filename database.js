@@ -4,11 +4,11 @@ const CONSTANTS = require('./app/config/constants');
 
 module.exports = {
   development: {
-    DB_USER: CONSTANTS.DB_USER,
-    DB_PASSWORD: CONSTANTS.DB_PASSWORD,
-    DB_NAME: CONSTANTS.DB_NAME,
-    DB_HOST: CONSTANTS.DB_HOST,
-    DB_PORT: CONSTANTS.DB_PORT,
+    username: CONSTANTS.DB_USER,
+    password: CONSTANTS.DB_PASSWORD,
+    database: CONSTANTS.DB_NAME,
+    host: CONSTANTS.DB_HOST,
+    port: CONSTANTS.DB_PORT,
     dialect: 'postgres',
     schema: 'public',
     isolationLevel: CONSTANTS.DB_ISOLATION_LEVEL,
@@ -20,11 +20,11 @@ module.exports = {
     },
   },
   production: {
-    DB_USER: CONSTANTS.DB_USER,
-    DB_PASSWORD: CONSTANTS.DB_PASSWORD,
-    DB_NAME: CONSTANTS.DB_NAME,
-    DB_HOST: CONSTANTS.DB_HOST,
-    DB_PORT: CONSTANTS.DB_PORT,
+    user: CONSTANTS.DB_USER,
+    password: CONSTANTS.DB_PASSWORD,
+    name: CONSTANTS.DB_NAME,
+    host: CONSTANTS.DB_HOST,
+    port: CONSTANTS.DB_PORT,
     dialect: 'postgres',
     schema: 'public',
     isolationLevel: CONSTANTS.DB_ISOLATION_LEVEL,
