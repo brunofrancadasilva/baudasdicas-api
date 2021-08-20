@@ -1,7 +1,57 @@
 'use strict';
 
 const express = require('express');
+const Busboy = require('busboy');
 const jwtDecode = require('./../middlewares/jwtDecode');
+
+function registerApi (httpMethod, params) {
+  httpMethod = httpMethod.toLowerCase();
+  const args = [];
+
+  if (!params.path || typeof params.path != 'string') {
+    throw new Error(`Missing 'path', or type of 'path' is not supported for API mapping. Please check your API mapping.`);
+  } else if (!params.handler || typeof params.handler != 'function') {
+    throw new Error(`Missing 'handler' on API mapping. Please check your API mapping for path '${params.path}'.`);
+  }
+
+  args.push(params.path);
+
+  if (params.middleware && typeof params.middleware === 'function') {
+    args.push(params.middleware);
+  }
+
+  args.push(apiHandlerWrapper(params.handler, params.successCode));
+  
+  // register api
+  params.router[httpMethod].apply(params.router, args);
+}
+
+function apiHandlerWrapper (handler, httpSuccessCode) {
+  return function (req, res) {
+    const successCode = httpSuccessCode || 200;
+    let promise;
+
+    try {
+      // wrap response into a promise
+      promise = new Promise(resolve => {
+        resolve(handler.apply(handler, arguments))
+      });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+
+    if (promise) {
+      promise.then(response => {
+        res.status(successCode).json(response);
+      }).catch(e => {
+        console.error(e);
+        res.status(500).send(e.message);
+      })
+    } else {
+      res.status(500).send('Request failed');
+    }
+  }
+}
 
 class BaseRoute {
   constructor (restName, requiresAuth) {
@@ -31,10 +81,11 @@ class BaseRoute {
   post(path, handler, options = {}){
     options.successCode = options.successCode ? options.successCode : 201;
 
-    this._registerApi('post', {
+    registerApi('post', {
       path,
       handler,
-      ...options
+      ...options,
+      router: this.router,
     });
   }
 
@@ -46,10 +97,11 @@ class BaseRoute {
    * @param {Number} options.successCode
    */
   get(path, handler, options = {}){
-    this._registerApi('get', {
+    registerApi('get', {
       path,
       handler,
-      ...options
+      ...options,
+      router: this.router,
     });
   }
 
@@ -61,10 +113,11 @@ class BaseRoute {
    * @param {Number} options.successCode
    */
   put(path, handler, options = {}){
-    this._registerApi('put', {
+    registerApi('put', {
       path,
       handler,
-      ...options
+      ...options,
+      router: this.router,
     });
   }
 
@@ -76,60 +129,32 @@ class BaseRoute {
    * @param {Number} options.successCode
    */
   delete(path, handler, options = {}){
-    this._registerApi('delete', {
+    registerApi('delete', {
       path,
       handler,
-      ...options
+      ...options,
+      router: this.router,
     });
   }
 
-  _registerApi (httpMethod, params) {
-    httpMethod = httpMethod.toLowerCase();
-    const args = [];
-
-    if (!params.path || typeof params.path != 'string') {
-      throw new Error(`Missing 'path', or type of 'path' is not supported for API mapping. Please check your API mapping.`);
-    } else if (!params.handler || typeof params.handler != 'function') {
-      throw new Error(`Missing 'handler' on API mapping. Please check your API mapping for path '${params.path}'.`);
-    }
-
-    args.push(params.path);
-
-    if (params.middleware && typeof params.middleware === 'function') {
-      args.push(params.middleware);
-    }
-
-    args.push(this._wrapper(params.handler, params.successCode));
+  getFilesAndUploadToStorage (req) {
+    const busboy = new Busboy({ headers: req.headers });
     
-    // register api
-    this.router[httpMethod].apply(this.router, args);
-  }
+    return new Promise(resolve => {
+      const filesStream = [];
 
-  _wrapper (handler, httpSuccessCode) {
-    return function (req, res) {
-      const successCode = httpSuccessCode || 200;
-      let promise;
+      busboy.on('file', (type, fileStream, filename, encoding, mimetype) => {
+        fileStream.resume();
+      });
 
-      try {
-        // wrap response into a promise
-        promise = new Promise(resolve => {
-          resolve(handler.apply(handler, arguments))
+      busboy.on('finish', () => {
+        resolve({
+          files: filesStream,
         });
-      } catch (error) {
-        res.status(500).json(error);
-      }
+      })      
 
-      if (promise) {
-        promise.then(response => {
-          res.status(successCode).json(response);
-        }).catch(e => {
-          console.error(e);
-          res.status(500).send(e.message);
-        })
-      } else {
-        res.status(500).send('Request failed');
-      }
-    }
+      req.pipe(busboy);
+    });
   }
 }
 

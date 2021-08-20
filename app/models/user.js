@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       this.updatedAt = data.updatedAt;
 
       this.recipes = data.recipes;
+      this.assets = data.assets;
 
       if (!data.id) {
         this.hashPassword();
@@ -61,6 +62,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate (models) {
       models.user.hasMany(models.recipe, {
         as: 'recipes'
+      });
+
+      models.user.hasMany(models.asset, {
+        as: 'assets'
       });
     }
   }

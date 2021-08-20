@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     getDescription () {
       return this.description;
     }
-    isArchived () {
+    getIsArchived () {
       return this.isArchived;
     }
     getAdditionalInfo () {
