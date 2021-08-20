@@ -46,7 +46,6 @@ setupCore()
     });
   }).catch(e => {
     console.log(e);
-    console.log('FAILED TO CONNECT ON DB');
   });
 
 // initialize core features

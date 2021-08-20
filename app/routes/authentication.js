@@ -51,15 +51,13 @@ class Authentication extends BaseRoute {
       active: true
     });
 
-    return user.save()
-      .then(createdUser => {
-        const jwt = Utils.createJwt(createdUser);
-
-        return {
-          user: createdUser,
-          token: jwt.token
-        };
-      });
+    const createdUser = await user.save();
+    const jwt = Utils.createJwt(createdUser);
+    
+    return {
+      user: createdUser,
+      token: jwt.token
+    };
   }
 }
 

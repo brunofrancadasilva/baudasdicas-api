@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
 
+      this.recipes = data.recipes;
+
       if (!data.id) {
         this.hashPassword();
       }
@@ -49,14 +51,17 @@ module.exports = (sequelize, DataTypes) => {
     isActive () {
       return this.active;
     }
-    setPassword (password) {
-      this.password = password;
-    }
     hashPassword () {
       this.password = BCrypt.hashSync(this.getPassword(), 8);
     }
     matchPassword (password) {
       return BCrypt.compare(password, this.getPassword());
+    }
+
+    static associate (models) {
+      models.user.hasMany(models.recipe, {
+        as: 'recipes'
+      });
     }
   }
   
