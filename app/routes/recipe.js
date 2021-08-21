@@ -3,7 +3,7 @@
 const path = require('path');
 const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
-const { asset: AssetModel, recipe: RecipeModel } = require('./../models');
+const { user: UserModel, asset: AssetModel, recipe: RecipeModel, ingredient: IngredientModel, step: StepModel } = require('./../models');
 const StorageServiceClass = require('./../services/utilities/storageService');
 
 class Recipe extends BaseRoute {
@@ -12,6 +12,9 @@ class Recipe extends BaseRoute {
 
     /* POST Routes */
     this.post('/form', this.createRecipe.bind(this));
+
+    /* GET Routes */
+    this.get('/:id', this.getRecipeById.bind(this));
   }
 
   async createRecipe (req) {
@@ -45,9 +48,9 @@ class Recipe extends BaseRoute {
 
       // create recipe
       const recipe = new RecipeModel({
-        name: 'teste',
-        description: '',
-        additionalInfo: '',
+        name: name,
+        description: description,
+        additionalInfo: additionalInfo,
         isArchived: false,
         authorId: user.id
       });
@@ -63,6 +66,41 @@ class Recipe extends BaseRoute {
     } catch (e) {
       throw e;
     }
+  }
+
+  async getRecipeById (req) {
+    const { params: { id: recipeId } } = req;
+
+    const recipe = await RecipeModel.findByPk(recipeId, {
+      include: [
+        {
+          model: IngredientModel,
+          as: 'ingredients',
+          required: false
+        },
+        {
+          model: StepModel,
+          as: 'steps',
+          required: false
+        },
+        {
+          model: AssetModel,
+          as: 'assets',
+          required: false
+        },
+        {
+          model: UserModel,
+          as: 'author',
+          required: true
+        }
+      ],
+      order: [[ { model: StepModel, as: 'steps'}, 'position', 'ASC' ]],
+      raw: true,
+      nest: true
+    });
+
+    // FIX IT
+    return recipe;
   }
 }
 
