@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static associate(models) {
-      models.recipe_has_step.belongsTo(models.recipe, {
+      this.belongsTo(models.recipe, {
         as: 'recipe',
         onDelete: 'CASCADE',
         foreignKey: {

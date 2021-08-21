@@ -21,13 +21,20 @@ class User extends BaseRoute {
   async getUserRecipes (req) {
     const { params: { id: userId } } = req;
 
-    const user = await UserModel.findOne({
-      where: {
-        id: userId
-      }
+    const user = await UserModel.findByPk(userId, {
+      include: [
+        {
+          model: RecipeModel,
+          as: 'recipes'
+        }
+      ]
     });
 
-    return user.getRecipes();
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user.recipes;
   }
 }
 

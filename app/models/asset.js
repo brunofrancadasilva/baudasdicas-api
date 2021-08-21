@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static associate(models) {
-      models.asset.belongsTo(models.user, {
+      this.belongsTo(models.user, {
         foreignKey: {
           allowNull: false,
           name: 'userId'

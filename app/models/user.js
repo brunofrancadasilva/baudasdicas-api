@@ -62,11 +62,13 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate (models) {
       this.hasMany(models.recipe, {
+        as: 'recipes',
         foreignKey: 'authorId'
       });
 
       this.hasMany(models.asset, {
-        as: 'assets'
+        as: 'assets',
+        foreignKey: 'userId'
       });
     }
   }

@@ -49,14 +49,14 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static associate(models) {
-      models.ingredient.belongsTo(models.recipe, {
+      this.belongsTo(models.recipe, {
         as: 'recipe',
         onDelete: 'CASCADE',
         foreignKey: {
           name: 'recipeId',
           allowNull: false
         }
-      })
+      });
     }
   };
 
