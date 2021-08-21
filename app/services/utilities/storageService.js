@@ -1,7 +1,7 @@
 'use strict';
 
-const S3Class = require('./../modules/s3');
-const CONSTANTS = require('./../config/constants');
+const S3Class = require('./../../modules/s3');
+const CONSTANTS = require('./../../config/constants');
 
 class StorageService {
   constructor () {

@@ -17,9 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       this.thumbnailSize = data.thumbnailSize;
       this.thumbnailExtension = data.thumbnailExtension;
       this.isArchived = data.isArchived;
-      this.userId = data.userId;
+      this.recipeId = data.recipeId;
 
-      this.user = data.user;
+      this.recipe = data.recipe;
     }
 
     getName () {
@@ -52,15 +52,18 @@ module.exports = (sequelize, DataTypes) => {
     getIsArchived () {
       return this.isArchived;
     }
+    getRecipeId () {
+      return this.recipeId;
+    }
 
     static associate(models) {
-      this.belongsTo(models.user, {
+      this.belongsTo(models.recipe, {
         foreignKey: {
           allowNull: false,
-          name: 'userId'
+          name: 'recipeId'
         },
         onDelete: 'CASCADE',
-        as: 'user'
+        as: 'recipe'
       });
     }
   };

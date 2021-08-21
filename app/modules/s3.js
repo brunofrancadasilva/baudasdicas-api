@@ -1,6 +1,6 @@
 'use strict';
 
-const CONSTANTS = require('../config/constants');
+const CONSTANTS = require('./../config/constants');
 const AWS = require('aws-sdk');
 const spacesEndpoint = new AWS.Endpoint(CONSTANTS.STORAGE_ENDPOINT);
 

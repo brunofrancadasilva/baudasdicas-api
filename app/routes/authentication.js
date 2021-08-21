@@ -1,8 +1,8 @@
 'use strict';
 
 const BaseRoute = require('./baseRoute');
-const { user: UserModel } = require('../models');
-const UtilsClass = require('./../services/utils');
+const { user: UserModel } = require('./../models');
+const UtilsClass = require('./../services/utilities/utils');
 
 class Authentication extends BaseRoute {
   constructor () {

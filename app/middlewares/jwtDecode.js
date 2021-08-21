@@ -1,8 +1,8 @@
 'use strict';
 
-const CONSTANTS = require('../config/constants');
-const { user: UserModel } = require('../models');
-const basePassportStrategy = require('../services/basePassportStrategy');
+const CONSTANTS = require('./../config/constants');
+const { user: UserModel } = require('./../models');
+const basePassportStrategy = require('./../services/basePassportStrategy');
 const Passport = require('passport');
 const PassportJwt = require('passport-jwt');
 const JwtStrategy = PassportJwt.Strategy;

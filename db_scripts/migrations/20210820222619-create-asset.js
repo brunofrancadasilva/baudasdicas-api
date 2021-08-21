@@ -49,11 +49,11 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
-      userId: {
+      recipeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'users',
+          model: 'recipes',
           key: 'id'
         },
         onDelete: 'cascade'

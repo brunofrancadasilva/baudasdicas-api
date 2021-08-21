@@ -65,11 +65,6 @@ module.exports = (sequelize, DataTypes) => {
         as: 'recipes',
         foreignKey: 'authorId'
       });
-
-      this.hasMany(models.asset, {
-        as: 'assets',
-        foreignKey: 'userId'
-      });
     }
   }
   

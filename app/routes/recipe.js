@@ -3,22 +3,25 @@
 const path = require('path');
 const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
-const { asset: AssetModel } = require('./../models');
-const StorageServiceClass = require('../services/storageService');
+const { asset: AssetModel, recipe: RecipeModel } = require('./../models');
+const StorageServiceClass = require('./../services/utilities/storageService');
+
 class Recipe extends BaseRoute {
   constructor () {
     super('Recipe', true);
 
     /* POST Routes */
-    this.post('/form', this.handleUpload.bind(this));
+    this.post('/form', this.createRecipe.bind(this));
   }
 
-  async handleUpload (req) {
+  async createRecipe (req) {
+    const { body: { name, description, additionalInfo, steps = [], ingredients = [] } } = req;
     const user = req.user;
 
     try {
-      const uploadStreamHandler = async (params) => {
-        const { fileStream, filename, mimetype } = params;
+      // deal uploaded files
+      const uploadStreamHandler = async (file, recipe) => {
+        const { fileStream, filename, mimetype } = file;
         const StorageService = new StorageServiceClass();
         const assetKey = `${user.id}/${new Date().getTime()}-${nanoid()}`;
 
@@ -33,14 +36,30 @@ class Recipe extends BaseRoute {
               contentType: mimetype,
               storageFileKey: assetKey,
               isArchived: false,
-              userId: user.id
+              recipeId: recipe.id
             });
 
             return asset.save();
           });
-      }
+      };
 
-      return this.getFilesAndUploadToStorage(req, uploadStreamHandler);
+      // create recipe
+      const recipe = new RecipeModel({
+        name: 'teste',
+        description: '',
+        additionalInfo: '',
+        isArchived: false,
+        authorId: user.id
+      });
+
+      const savedRecipe = await recipe.save();
+      const uploadedAssets = await this.getFilesAndUploadToStorage(req, uploadStreamHandler, [savedRecipe]);
+
+      return {
+        ...savedRecipe.dataValues,
+        author: await savedRecipe.getAuthor(),
+        assets: uploadedAssets
+      };
     } catch (e) {
       throw e;
     }

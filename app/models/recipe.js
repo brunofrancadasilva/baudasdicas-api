@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       this.author = data.author;
       this.steps = data.steps;
       this.ingredients = data.ingredients;
+      this.assets = data.assets;
     }
     
     getId () {
@@ -62,7 +63,11 @@ module.exports = (sequelize, DataTypes) => {
 
       this.hasMany(models.recipe_has_step, {
         as: 'steps'
-      })
+      });
+
+      this.hasMany(models.asset, {
+        as: 'assets'
+      });
     }
   };
 

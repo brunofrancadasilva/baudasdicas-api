@@ -137,29 +137,27 @@ class BaseRoute {
     });
   }
 
-  getFilesAndUploadToStorage (req, fileHandler) {
+  getFilesAndUploadToStorage (req, fileHandler, fileHandlerAdditionalParams = []) {
     const busboy = new Busboy({ headers: req.headers });
+    const fileHandleResponses = [];
     let counter = 0;
     let hasFiles = false;
 
     return new Promise(resolve => {
       busboy.on('file', (type, fileStream, filename, encoding, mimetype) => {
         console.log('UPLOADING FILE', filename);
-        
+
         hasFiles = true;
         counter++;
         
-        fileHandler({
-          fileStream,
-          filename,
-          mimetype,
-        }).then(() => {
+        fileHandler.apply(this, [{ fileStream, filename, mimetype }, ...fileHandlerAdditionalParams]).then(response => {
           counter--;
-
+          
+          fileHandleResponses.push(response);
           if (counter === 0) {
-            resolve();
+            resolve(fileHandleResponses);
           }
-        })
+        });
       });
 
       busboy.on('finish', () => {
@@ -168,7 +166,7 @@ class BaseRoute {
         }
 
         resolve();
-      })      
+      });
 
       req.pipe(busboy);
     });

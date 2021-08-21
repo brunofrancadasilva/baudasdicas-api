@@ -1,7 +1,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const CONSTANTS = require('../config/constants');
+const CONSTANTS = require('./../../config/constants');
 
 class Utils {
   createJwt (user) {

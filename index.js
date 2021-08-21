@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const CONSTANTS = require('./app/config/constants');
 const { sequelize, Sequelize } = require('./app/models');
 const ApiManager = require('./app/managers/apiManager');
-const StorageServiceClass = require('./app/services/storageService');
+const StorageServiceClass = require('./app/services/utilities/storageService');
 const sequelizeMigrate = require('./app/modules/sequelizeMigrate');
 
 const app = express();
