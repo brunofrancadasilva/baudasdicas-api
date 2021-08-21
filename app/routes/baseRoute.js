@@ -139,28 +139,35 @@ class BaseRoute {
 
   getFilesAndUploadToStorage (req, fileHandler) {
     const busboy = new Busboy({ headers: req.headers });
-    
+    let counter = 0;
+    let hasFiles = false;
+
     return new Promise(resolve => {
       busboy.on('file', (type, fileStream, filename, encoding, mimetype) => {
+        console.log('UPLOADING FILE', filename);
+        
+        hasFiles = true;
         counter++;
         
         fileHandler({
-          type,
           fileStream,
           filename,
-          encoding,
           mimetype,
         }).then(() => {
           counter--;
 
-
+          if (counter === 0) {
+            resolve();
+          }
         })
       });
 
       busboy.on('finish', () => {
-        if (counter === 0) {
-          resolve();
+        if (hasFiles) {
+          return;
         }
+
+        resolve();
       })      
 
       req.pipe(busboy);

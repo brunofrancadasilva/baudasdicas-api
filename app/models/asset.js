@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       this.thumbnailSize = data.thumbnailSize;
       this.thumbnailExtension = data.thumbnailExtension;
       this.isArchived = data.isArchived;
+      this.userId = data.userId;
 
       this.user = data.user;
     }

@@ -3,10 +3,11 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const CONSTANTS = require('./app/config/constants');
 const { sequelize, Sequelize } = require('./app/models');
 const ApiManager = require('./app/managers/apiManager');
-const storageService = new (require('./app/services/storageService'))();
+const StorageServiceClass = require('./app/services/storageService');
 const sequelizeMigrate = require('./app/modules/sequelizeMigrate');
 
 const app = express();
@@ -16,6 +17,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -46,10 +48,13 @@ setupCore()
     });
   }).catch(e => {
     console.log(e);
+    throw e;
   });
 
 // initialize core features
 async function setupCore() {
+  const StorageService = new StorageServiceClass();
+
   if (CONSTANTS.IS_PROD_ENV) {
     await sequelizeMigrate.migrate({
       sequelize: sequelize,
@@ -60,6 +65,5 @@ async function setupCore() {
     await sequelize.authenticate();
   }
   
-
-  return storageService.setupBuckets();
+  return StorageService.setupBuckets();
 }

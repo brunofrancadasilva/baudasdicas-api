@@ -1,12 +1,12 @@
 'use strict';
 
-const s3 = new (require('./../modules/s3'))();
+const S3Class = require('./../modules/s3');
 const CONSTANTS = require('./../config/constants');
 
 class StorageService {
   constructor () {
     this.PRESIGNED_URL_EXPIRATION = 300;
-    this.s3 = s3.create();
+    this.s3 = new S3Class().create();
   }
 
   async setupBuckets () {
@@ -51,20 +51,19 @@ class StorageService {
   }
 
   async uploadFile (fileKey, file) {
-    return new Promise((resolve, reject) => {
-      this.s3.putObject({
-        Bucket: CONSTANTS.BUCKET_NAME,
-        Key: fileKey,
-        Body: file,
-        ACL: 'private'
-      }, (err, data) => {
-        if (err) {
-          reject(err);
-        }
+    return this.s3.upload({
+      Bucket: CONSTANTS.BUCKET_NAME,
+      Key: fileKey,
+      Body: file,
+      ACL: 'private'
+    }).promise();
+  }
 
-        resolve(data);
-      });
-    });
+  async getMetadata (fileKey) {
+    return this.s3.headObject({
+      Key: fileKey,
+      Bucket: CONSTANTS.BUCKET_NAME
+    }).promise();
   }
 }
 

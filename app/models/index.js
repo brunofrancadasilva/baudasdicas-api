@@ -27,6 +27,7 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
   dialect: config.dialect,
   isolationLevel: config.isolationLevel,
   pool: config.pool,
+  logging: false,
   dialectOptions
 });
 

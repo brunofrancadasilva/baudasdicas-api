@@ -2,7 +2,7 @@
 
 const BaseRoute = require('./baseRoute');
 const { user: UserModel } = require('../models');
-const Utils = new (require('./../services/utils'))();
+const UtilsClass = require('./../services/utils');
 
 class Authentication extends BaseRoute {
   constructor () {
@@ -15,6 +15,7 @@ class Authentication extends BaseRoute {
 
   async handleUserSignIn (req) {
     const { body: { email, password } } = req;
+    const Utils = new UtilsClass();
 
     const user = await UserModel.findOne({
       where: {
@@ -41,7 +42,8 @@ class Authentication extends BaseRoute {
 
   async handleUserSignUp (req) {
     const { body: { firstName, lastName, email, password } } = req;
-
+    const Utils = new UtilsClass();
+    
     const user = new UserModel({
       firstName,
       lastName,

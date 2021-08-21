@@ -1,13 +1,13 @@
 'use strict';
 
+const path = require('path');
+const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
-
+const { asset: AssetModel } = require('./../models');
+const StorageServiceClass = require('../services/storageService');
 class Recipe extends BaseRoute {
   constructor () {
     super('Recipe', true);
-
-    /* GET Routes */
-    this.get('/form', this.getForm.bind(this));
 
     /* POST Routes */
     this.post('/form', this.handleUpload.bind(this));
@@ -17,28 +17,33 @@ class Recipe extends BaseRoute {
     const user = req.user;
 
     try {
-      const uploadStreamHandler = (stream) => {
-        
+      const uploadStreamHandler = async (params) => {
+        const { fileStream, filename, mimetype } = params;
+        const StorageService = new StorageServiceClass();
+        const assetKey = `${user.id}/${new Date().getTime()}-${nanoid()}`;
+
+        return StorageService.uploadFile(assetKey, fileStream)
+          .then(async () => {
+            const metadata = await StorageService.getMetadata(assetKey);
+            
+            const asset = new AssetModel({
+              name: path.parse(filename).name,
+              size: metadata.ContentLength,
+              extension: path.extname(filename),
+              contentType: mimetype,
+              storageFileKey: assetKey,
+              isArchived: false,
+              userId: user.id
+            });
+
+            return asset.save();
+          });
       }
 
-      const payload = await this.uploadFilesToStorage(req, uploadStreamHandler);
-
-      return;
+      return this.getFilesAndUploadToStorage(req, uploadStreamHandler);
     } catch (e) {
-      console.log(e);
       throw e;
     }
-  }
-
-  getForm (req, res) {
-    res.writeHead(200, { Connection: 'close' });
-    res.end('<html><head></head><body>\
-               <form method="POST" enctype="multipart/form-data">\
-                <input type="text" name="textfield"><br />\
-                <input type="file" name="filefield"><br />\
-                <input type="submit">\
-              </form>\
-            </body></html>');
   }
 }
 

@@ -10,6 +10,7 @@ const ExtractJwt = PassportJwt.ExtractJwt;
 
 function fromCookieHeader (req) {
   let token = null;
+  
   if (req && req.cookies && req.cookies.jwt) {
     token = req.cookies.jwt;
   }
