@@ -49,9 +49,10 @@ module.exports = (sequelize, DataTypes) => {
     getCreatedAt () {
       return this.createdAt;
     }
-    isActive () {
+    getIsActive () {
       return this.active;
     }
+    
     hashPassword () {
       this.password = BCrypt.hashSync(this.getPassword(), 8);
     }
@@ -60,11 +61,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static associate (models) {
-      models.user.hasMany(models.recipe, {
-        as: 'recipes'
+      this.hasMany(models.recipe, {
+        foreignKey: 'authorId'
       });
 
-      models.user.hasMany(models.asset, {
+      this.hasMany(models.asset, {
         as: 'assets'
       });
     }

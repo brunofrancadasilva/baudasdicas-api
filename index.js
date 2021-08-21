@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const CONSTANTS = require('./app/config/constants');
-const db = require('./app/models/index');
+const { sequelize, Sequelize } = require('./app/models');
 const ApiManager = require('./app/managers/apiManager');
 const storageService = new (require('./app/services/storageService'))();
 const sequelizeMigrate = require('./app/modules/sequelizeMigrate');
@@ -52,12 +52,12 @@ setupCore()
 async function setupCore() {
   if (CONSTANTS.IS_PROD_ENV) {
     await sequelizeMigrate.migrate({
-      sequelize: db.sequelize,
-      SequelizeImport: db.Sequelize,
+      sequelize: sequelize,
+      SequelizeImport: Sequelize,
       migrationsDir: './db_scripts/migrations/'
     });
   } else {
-    await db.sequelize.authenticate();
+    await sequelize.authenticate();
   }
   
 

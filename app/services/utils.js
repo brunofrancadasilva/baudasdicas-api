@@ -8,7 +8,7 @@ class Utils {
     const payload = {
       id: user.getId(),
       email: user.getEmail(),
-      active: user.isActive()
+      active: user.getIsActive()
     };
 
     const token = jwt.sign(payload, CONSTANTS.JWT_SECRET, {

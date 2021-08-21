@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static associate (models) {
-      models.recipe.belongsTo(models.user, {
+      this.belongsTo(models.user, {
         as: 'author',
         onDelete: 'CASCADE',
         foreignKey: {
@@ -56,11 +56,11 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
 
-      models.recipe.hasMany(models.ingredient, {
+      this.hasMany(models.ingredient, {
         as: 'ingredients'
       });
 
-      models.recipe.hasMany(models.recipe_has_step, {
+      this.hasMany(models.recipe_has_step, {
         as: 'steps'
       })
     }

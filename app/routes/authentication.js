@@ -1,8 +1,7 @@
 'use strict';
 
 const BaseRoute = require('./baseRoute');
-const db = require('./../models/index');
-const UserModel = require('../models/user')(db.sequelize, db.Sequelize.DataTypes);
+const { user: UserModel } = require('../models');
 const Utils = new (require('./../services/utils'))();
 
 class Authentication extends BaseRoute {

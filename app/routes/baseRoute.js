@@ -137,20 +137,30 @@ class BaseRoute {
     });
   }
 
-  getFilesAndUploadToStorage (req) {
+  getFilesAndUploadToStorage (req, fileHandler) {
     const busboy = new Busboy({ headers: req.headers });
     
     return new Promise(resolve => {
-      const filesStream = [];
-
       busboy.on('file', (type, fileStream, filename, encoding, mimetype) => {
-        fileStream.resume();
+        counter++;
+        
+        fileHandler({
+          type,
+          fileStream,
+          filename,
+          encoding,
+          mimetype,
+        }).then(() => {
+          counter--;
+
+
+        })
       });
 
       busboy.on('finish', () => {
-        resolve({
-          files: filesStream,
-        });
+        if (counter === 0) {
+          resolve();
+        }
       })      
 
       req.pipe(busboy);

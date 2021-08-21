@@ -1,8 +1,7 @@
 'use strict';
 
 const CONSTANTS = require('../config/constants');
-const db = require('../models/index');
-const UserModel = require('../models/user')(db.sequelize, db.Sequelize.DataTypes);
+const { user: UserModel } = require('../models');
 const basePassportStrategy = require('../services/basePassportStrategy');
 const Passport = require('passport');
 const PassportJwt = require('passport-jwt');
