@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       this.id = data.id;
       this.firstName = data.firstName;
       this.lastName = data.lastName;
+      this.fullName = data.fullName;
       this.email = data.email;
       this.password = data.password;
       this.active = data.active;
@@ -19,10 +20,6 @@ module.exports = (sequelize, DataTypes) => {
 
       this.recipes = data.recipes;
       this.assets = data.assets;
-
-      if (!data.id) {
-        this.hashPassword();
-      }
     }
 
     getId () {
@@ -35,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       return this.lastName;
     }
     getFullName() {
-      return `${this.firstName} ${this.lastName}`;
+      return this.fullName;
     }
     getEmail () {
       return this.email;
@@ -53,9 +50,6 @@ module.exports = (sequelize, DataTypes) => {
       return this.active;
     }
     
-    hashPassword () {
-      this.password = BCrypt.hashSync(this.getPassword(), 8);
-    }
     matchPassword (password) {
       return BCrypt.compare(password, this.getPassword());
     }
@@ -77,14 +71,30 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    fullName: {
+      type: DataTypes.VIRTUAL,
+      get () {
+        return `${this.firstName} ${this.lastName}`
+      }
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+      validate: {
+        isEmail: true,
+      },
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      set (value) {
+        if (!this.getDataValue('id')) {
+          this.setDataValue('password', BCrypt.hashSync(value, 8));
+        } else {
+          this.setDataValue('password', value);
+        }
+      }
     },
     active: {
       type: DataTypes.BOOLEAN,
@@ -94,6 +104,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'user',
+    scopes: {
+      withoutPassword: {
+        attributes: { exclude: ['password'] }
+      }
+    }
   });
 
   return User;

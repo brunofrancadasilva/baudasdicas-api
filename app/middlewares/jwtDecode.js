@@ -29,7 +29,7 @@ const options = {
 };
 
 Passport.use(new JwtStrategy(options, async (req, jwtPayload, done) => {
-  const user = await UserModel.findByPk(jwtPayload.id);
+  const user = await UserModel.scope('withoutPassword').findByPk(jwtPayload.id);
 
   if (!user) {
     return done(new Error(`User ${jwtPayload.id} not found`), false);

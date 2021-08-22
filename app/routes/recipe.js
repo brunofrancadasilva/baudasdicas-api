@@ -11,7 +11,8 @@ class Recipe extends BaseRoute {
     super('Recipe', true);
 
     /* POST Routes */
-    this.post('/form', this.createRecipe.bind(this));
+    this.post('/', this.createRecipe.bind(this));
+    this.post('/:id/assets', this.attachAssets.bind(this));
 
     /* GET Routes */
     this.get('/:id', this.getRecipeById.bind(this));
@@ -22,7 +23,29 @@ class Recipe extends BaseRoute {
     const user = req.user;
 
     try {
-      // deal uploaded files
+      const recipe = new RecipeModel({
+        name: name,
+        description: description,
+        additionalInfo: additionalInfo,
+        isArchived: false,
+        authorId: user.id
+      });
+
+      const savedRecipe = await recipe.save();
+
+      return {
+        ...savedRecipe,
+        author: await savedRecipe.getAuthor()
+      };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async attachAssets (req) {
+    const { params: { id: recipeId } } = req;
+
+    try {
       const uploadStreamHandler = async (file, recipe) => {
         const { fileStream, filename, mimetype } = file;
         const StorageService = new StorageServiceClass();
@@ -46,21 +69,16 @@ class Recipe extends BaseRoute {
           });
       };
 
-      // create recipe
-      const recipe = new RecipeModel({
-        name: name,
-        description: description,
-        additionalInfo: additionalInfo,
-        isArchived: false,
-        authorId: user.id
-      });
+      const recipe = await RecipeModel.findByPk(recipeId);
 
-      const savedRecipe = await recipe.save();
-      const uploadedAssets = await this.getFilesAndUploadToStorage(req, uploadStreamHandler, [savedRecipe]);
+      if (!recipe) {
+        throw new Error('Recipe not found');
+      }
+
+      const uploadedAssets = await this.getFilesAndUploadToStorage(req, uploadStreamHandler, [recipe]);
 
       return {
-        ...savedRecipe.dataValues,
-        author: await savedRecipe.getAuthor(),
+        recipe,
         assets: uploadedAssets
       };
     } catch (e) {
@@ -89,9 +107,9 @@ class Recipe extends BaseRoute {
           required: false
         },
         {
-          model: UserModel,
+          model: UserModel.scope('withoutPassword'),
           as: 'author',
-          required: true
+          required: true,
         }
       ],
       order: [[ { model: StepModel, as: 'steps'}, 'position', 'ASC' ]],
@@ -99,8 +117,13 @@ class Recipe extends BaseRoute {
       nest: true
     });
 
-    // FIX IT
-    return recipe;
+    // WTF ??
+    return {
+      ...recipe,
+      ingredients: recipe.ingredients && !Array.isArray(recipe.ingredients) && !recipe.ingredients.id ? [] : recipe.ingredients,
+      steps: recipe.steps && !Array.isArray(recipe.steps) && !recipe.steps.id ? [] : recipe.steps,
+      assets: recipe.assets && !Array.isArray(recipe.assets) && !recipe.assets.id ? [] : recipe.assets,
+    };
   }
 }
 

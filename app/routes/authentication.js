@@ -52,9 +52,12 @@ class Authentication extends BaseRoute {
       active: true
     });
 
-    const createdUser = await user.save();
+    const createdUser = await user.save({
+      attributes: { exclude: ['password'] }
+    });
     const jwt = Utils.createJwt(createdUser);
     
+    delete createdUser.dataValues.password;
     return {
       user: createdUser,
       token: jwt.token
