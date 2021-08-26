@@ -24,6 +24,11 @@ class Recipe extends BaseRoute {
     const transaction = await sequelize.transaction();
 
     try {
+      if (!steps.length || !ingredients.length) {
+        throw new Error('You must provide at least one step and one ingredient');
+      }
+
+      // create recipe
       const recipe = new RecipeModel({
         name: name,
         description: description,
@@ -33,49 +38,45 @@ class Recipe extends BaseRoute {
       });
       const savedRecipe = await recipe.save({ transaction });
 
-      if (steps.length) {
-        const mappedSteps = steps.map(step => {
-          if (!step.description || step.position === null || step.position === undefined) {
-            throw new Error('Invalid step properties');
-          }
-  
-          return new StepModel({
-            description: step.description,
-            position: step.position,
-            recipeId: savedRecipe.id,
-          });
-        })
+      // create steps
+      const mappedSteps = steps.map(step => {
+        if (!step.description || step.position === null || step.position === undefined) {
+          throw new Error('Invalid step properties');
+        }
 
-        savedRecipe.steps = await StepModel.bulkCreate(mappedSteps, {
-          transaction,
-          returning: true
+        return new StepModel({
+          description: step.description,
+          position: step.position,
+          recipeId: savedRecipe.id,
         });
-      }
+      })
+      const savedSteps = await StepModel.bulkCreate(mappedSteps, {
+        transaction,
+        returning: true
+      });
 
-      if (ingredients.length) {
-        const mappedIngredients = ingredients.map(ingredient => {
-          if (!ingredient.description) {
-            throw new Error('Invalid ingredient payload');
-          }
-  
-          return new IngredientModel({
-            description: ingredient.description,
-            optional: Boolean(ingredient.optional),
-            recipeId: savedRecipe.id,
-          });
-        })
+      // create ingredients
+      const mappedIngredients = ingredients.map(ingredient => {
+        if (!ingredient.description) {
+          throw new Error('Invalid ingredient payload');
+        }
 
-        recipe.ingredients = await IngredientModel.bulkCreate(mappedIngredients, { 
-          transaction,
-          returning: true
-        }); 
-      }
+        return new IngredientModel({
+          description: ingredient.description,
+          optional: Boolean(ingredient.optional),
+          recipeId: savedRecipe.id,
+        });
+      });
+      const savedIngredients = await IngredientModel.bulkCreate(mappedIngredients, { 
+        transaction,
+        returning: true
+      }); 
 
       await transaction.commit();
       return {
         ...savedRecipe.dataValues,
-        steps: savedRecipe.steps,
-        ingredients: savedRecipe.ingredients,
+        steps: savedSteps,
+        ingredients: savedIngredients,
         author: await savedRecipe.getAuthor({ scope: 'withoutPassword' })
       };
     } catch (e) {
@@ -155,16 +156,13 @@ class Recipe extends BaseRoute {
         }
       ],
       order: [[ { model: StepModel, as: 'steps'}, 'position', 'ASC' ]],
-      raw: true,
-      nest: true
     });
 
-    // WTF ??
     return {
-      ...recipe,
-      ingredients: recipe.ingredients && !Array.isArray(recipe.ingredients) && !recipe.ingredients.id ? [] : recipe.ingredients,
-      steps: recipe.steps && !Array.isArray(recipe.steps) && !recipe.steps.id ? [] : recipe.steps,
-      assets: recipe.assets && !Array.isArray(recipe.assets) && !recipe.assets.id ? [] : recipe.assets,
+      ...recipe.dataValues,
+      ingredients: recipe.ingredients,
+      steps: recipe.steps,
+      assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
     };
   }
 }
