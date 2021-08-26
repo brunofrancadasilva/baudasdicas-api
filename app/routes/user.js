@@ -8,8 +8,15 @@ class User extends BaseRoute {
     super('User', true);
 
     /* GET Routes */
+    this.get('/loggedIn', this.getLoggedUser.bind(this));
     this.get('/recipes', this.getLoggedUserRecipes.bind(this));
     this.get('/:id/recipes', this.getUserRecipes.bind(this));
+  }
+
+  async getLoggedUser (req) {
+    const { user } = req;
+
+    return user;
   }
 
   async getLoggedUserRecipes (req) {

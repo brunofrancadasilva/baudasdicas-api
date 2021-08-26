@@ -36,7 +36,9 @@ class Authentication extends BaseRoute {
     const jwt = Utils.createJwt(user);
 
     return {
-      token: jwt.token
+      token: jwt.token,
+      name: user.getFullName(),
+      email: user.getEmail()
     };
   }
 
