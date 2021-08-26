@@ -163,6 +163,7 @@ class Recipe extends BaseRoute {
       ingredients: recipe.ingredients,
       steps: recipe.steps,
       assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
+      author: await recipe.getAuthor({ scope: 'withoutPassword' })
     };
   }
 }
