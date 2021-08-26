@@ -1,7 +1,7 @@
 'use strict';
 
 const BaseRoute = require('./baseRoute');
-const { user: UserModel, recipe: RecipeModel } = require('./../models');
+const { user: UserModel, recipe: RecipeModel, ingredient: IngredientModel, step: StepModel, asset: AssetModel } = require('./../models');
 
 class User extends BaseRoute {
   constructor () {
@@ -22,17 +22,62 @@ class User extends BaseRoute {
   async getLoggedUserRecipes (req) {
     const user = req.user;
 
-    return user.getRecipes();
+    const recipes = await user.getRecipes({
+      include: [
+        {
+          model: IngredientModel,
+          as: 'ingredients',
+          required: false
+        },
+        {
+          model: StepModel,
+          as: 'steps',
+          required: false
+        },
+        {
+          model: AssetModel,
+          as: 'assets',
+          required: false
+        }
+      ]
+    });
+
+    return recipes.map(recipe => {
+      return {
+        ...recipe.dataValues,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
+        author: user
+      }
+    });
   }
 
   async getUserRecipes (req) {
     const { params: { id: userId } } = req;
 
-    const user = await UserModel.findByPk(userId, {
+    const user = await UserModel.scope('withoutPassword').findByPk(userId, {
       include: [
         {
           model: RecipeModel,
-          as: 'recipes'
+          as: 'recipes',
+          include: [
+            {
+              model: IngredientModel,
+              as: 'ingredients',
+              required: false
+            },
+            {
+              model: StepModel,
+              as: 'steps',
+              required: false
+            },
+            {
+              model: AssetModel,
+              as: 'assets',
+              required: false
+            }
+          ]
         }
       ]
     });
@@ -41,7 +86,15 @@ class User extends BaseRoute {
       throw new Error('User not found');
     }
 
-    return user.recipes;
+    return user.recipes.map(recipe => {
+      return {
+        ...recipe,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
+        author: user.dataValues
+      }
+    });
   }
 }
 
