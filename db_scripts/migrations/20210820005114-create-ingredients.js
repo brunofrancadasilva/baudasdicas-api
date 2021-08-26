@@ -8,20 +8,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
       description: {
         type: Sequelize.TEXT,
-        allowNull: true
-      },
-      quantity: {
-        type: Sequelize.FLOAT,
-        allowNull: true
-      },
-      unit: {
-        type: Sequelize.STRING,
         allowNull: true
       },
       optional: {

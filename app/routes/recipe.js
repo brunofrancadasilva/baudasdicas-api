@@ -3,7 +3,7 @@
 const path = require('path');
 const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
-const { user: UserModel, asset: AssetModel, recipe: RecipeModel, ingredient: IngredientModel, step: StepModel } = require('./../models');
+const { sequelize, user: UserModel, asset: AssetModel, recipe: RecipeModel, ingredient: IngredientModel, step: StepModel } = require('./../models');
 const StorageServiceClass = require('./../services/utilities/storageService');
 
 class Recipe extends BaseRoute {
@@ -21,6 +21,7 @@ class Recipe extends BaseRoute {
   async createRecipe (req) {
     const { body: { name, description, additionalInfo, steps = [], ingredients = [] } } = req;
     const user = req.user;
+    const transaction = await sequelize.transaction();
 
     try {
       const recipe = new RecipeModel({
@@ -30,14 +31,55 @@ class Recipe extends BaseRoute {
         isArchived: false,
         authorId: user.id
       });
+      const savedRecipe = await recipe.save({ transaction });
 
-      const savedRecipe = await recipe.save();
+      if (steps.length) {
+        const mappedSteps = steps.map(step => {
+          if (!step.description || step.position === null || step.position === undefined) {
+            throw new Error('Invalid step properties');
+          }
+  
+          return new StepModel({
+            description: step.description,
+            position: step.position,
+            recipeId: savedRecipe.id,
+          });
+        })
 
+        savedRecipe.steps = await StepModel.bulkCreate(mappedSteps, {
+          transaction,
+          returning: true
+        });
+      }
+
+      if (ingredients.length) {
+        const mappedIngredients = ingredients.map(ingredient => {
+          if (!ingredient.description) {
+            throw new Error('Invalid ingredient payload');
+          }
+  
+          return new IngredientModel({
+            description: ingredient.description,
+            optional: Boolean(ingredient.optional),
+            recipeId: savedRecipe.id,
+          });
+        })
+
+        recipe.ingredients = await IngredientModel.bulkCreate(mappedIngredients, { 
+          transaction,
+          returning: true
+        }); 
+      }
+
+      await transaction.commit();
       return {
-        ...savedRecipe,
-        author: await savedRecipe.getAuthor()
+        ...savedRecipe.dataValues,
+        steps: savedRecipe.steps,
+        ingredients: savedRecipe.ingredients,
+        author: await savedRecipe.getAuthor({ scope: 'withoutPassword' })
       };
     } catch (e) {
+      await transaction.rollback();
       throw e;
     }
   }
