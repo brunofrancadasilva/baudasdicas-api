@@ -41,9 +41,20 @@ class Authentication extends BaseRoute {
   }
 
   async handleUserSignUp (req) {
-    const { body: { firstName, lastName, email, password } } = req;
-    const Utils = new UtilsClass();
+    const { body: { firstName, lastName, email, password } } = req;    
     
+    const userExists = await UserModel.findOne({
+      where: {
+        email
+      }
+    });
+
+    if (userExists) {
+      throw new Error('User already exists');
+    }
+
+    const Utils = new UtilsClass();
+
     const user = new UserModel({
       firstName,
       lastName,
@@ -55,6 +66,7 @@ class Authentication extends BaseRoute {
     const createdUser = await user.save({
       attributes: { exclude: ['password'] }
     });
+
     const jwt = Utils.createJwt(createdUser);
     
     delete createdUser.dataValues.password;
