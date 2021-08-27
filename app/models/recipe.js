@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       this.assets = data.assets;
       this.ingredients = data.ingredients;
       this.category = data.category;
+      this.tags = data.tags;
     }
     
     getId () {

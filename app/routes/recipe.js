@@ -16,6 +16,9 @@ class Recipe extends BaseRoute {
     this.post('/', this.createRecipe.bind(this));
     this.post('/:id/assets', this.attachAssets.bind(this));
 
+    /* PUT Routes */
+    this.put('/:id/cover', this.setRecipeCover.bind(this));
+
     /* GET Routes */
     this.get('/:id', this.getRecipeById.bind(this));
   }
@@ -93,7 +96,8 @@ class Recipe extends BaseRoute {
               contentType: mimetype,
               storageFileKey: assetKey,
               isArchived: false,
-              recipeId: recipe.id
+              recipeId: recipe.id,
+              isCover: false
             });
 
             return asset.save();
@@ -113,6 +117,52 @@ class Recipe extends BaseRoute {
         assets: uploadedAssets
       };
     } catch (e) {
+      throw e;
+    }
+  }
+
+  async setRecipeCover (req) {
+    const { params: { id: recipeId }, body: { assetId } } = req;
+    const transaction = await sequelize.transaction();
+
+    try {
+      if (!assetId) {
+        throw new Error('An assetId is required');
+      }
+  
+      const newCoverAsset = await AssetModel.findOne({
+        where: {
+          recipeId,
+          id: assetId
+        }
+      });
+  
+      if (!newCoverAsset) {
+        throw new Error('Asset not found');
+      }
+
+      await AssetModel.update({
+        isCover: false
+      }, {
+        where: {
+          recipeId
+        },
+        transaction
+      });
+
+      await AssetModel.update({
+        isCover: true
+      }, {
+        where: {
+          recipeId,
+          id: assetId
+        },
+        transaction
+      });
+
+      return transaction.commit();
+    } catch (e) {
+      await transaction.rollback();
       throw e;
     }
   }

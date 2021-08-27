@@ -136,6 +136,11 @@ class RecipeService {
           required: false
         },
         {
+          model: RecipeTagModel,
+          as: 'tags',
+          required: false
+        },
+        {
           model: UserModel.scope('withoutPassword'),
           as: 'author',
           required: true,
@@ -152,6 +157,7 @@ class RecipeService {
       ...recipe.dataValues,
       ingredients: recipe.ingredients,
       steps: recipe.steps,
+      tags: recipe.tags && Array.isArray(recipe.tags) && !recipe.tags[0].id ? [] : recipe.tags,
       assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
       author: await recipe.getAuthor({ scope: 'withoutPassword' })
     };
