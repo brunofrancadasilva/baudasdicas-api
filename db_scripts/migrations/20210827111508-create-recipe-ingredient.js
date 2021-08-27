@@ -1,48 +1,36 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('recipes', {
+    await queryInterface.createTable('recipe_ingredients', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false
+      quantity: {
+        type: Sequelize.FLOAT
       },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-        defaultValue: null
+      unit: {
+        type: Sequelize.STRING
       },
-      servingTime: {
-        type: Sequelize.INTEGER,
-        allowNull: true
-      },
-      isArchived: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-      },
-      categoryId: {
+      ingredientId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'categories',
+          model: 'ingredients',
           key: 'id'
         },
         onDelete: 'cascade'
       },
-      authorId: {
+      recipeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'users',
+          model: 'recipes',
           key: 'id'
         },
-        onDelete: 'CASCADE'
+        onDelete: 'cascade'
       },
       createdAt: {
         allowNull: false,
@@ -52,11 +40,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    }, {
-      schema: 'public'
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('recipes');
+    await queryInterface.dropTable('recipe_ingredients');
   }
 };

@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('assets', {
+    await queryInterface.createTable('recipe_assets', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -49,6 +49,11 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
+      isCover: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       recipeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -69,6 +74,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('assets');
+    await queryInterface.dropTable('recipe_assets');
   }
 };

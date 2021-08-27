@@ -18,8 +18,9 @@ module.exports = (sequelize, DataTypes) => {
 
       this.author = data.author;
       this.steps = data.steps;
-      this.ingredients = data.ingredients;
       this.assets = data.assets;
+      this.ingredients = data.ingredients;
+      this.category = data.category;
     }
     
     getId () {
@@ -57,16 +58,29 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
 
-      this.hasMany(models.ingredient, {
+      this.belongsTo(models.category, {
+        as: 'category',
+        onDelete: 'CASCADE',
+        foreignKey: {
+          name: 'categoryId',
+          allowNull: false
+        }
+      });
+
+      this.hasMany(models.recipe_ingredient, {
         as: 'ingredients'
       });
 
-      this.hasMany(models.step, {
+      this.hasMany(models.recipe_step, {
         as: 'steps'
       });
 
-      this.hasMany(models.asset, {
+      this.hasMany(models.recipe_asset, {
         as: 'assets'
+      });
+
+      this.hasMany(models.recipe_tag, {
+        as: 'tags'
       });
     }
   };
@@ -86,9 +100,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false
     },
-    additionalInfo: {
-      type: DataTypes.TEXT,
-      allowNull: true
+    servingTime: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     }
   }, {
     sequelize,

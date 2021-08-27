@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Asset extends Model {
+  class Recipe_asset extends Model {
     constructor (data) {
       super(data);
 
@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       this.thumbnailSize = data.thumbnailSize;
       this.thumbnailExtension = data.thumbnailExtension;
       this.isArchived = data.isArchived;
+      this.isCover = data.isCover;
       this.recipeId = data.recipeId;
 
       this.recipe = data.recipe;
@@ -52,6 +53,9 @@ module.exports = (sequelize, DataTypes) => {
     getIsArchived () {
       return this.isArchived;
     }
+    getIsCover () {
+      return this.isCover;
+    }
     getRecipeId () {
       return this.recipeId;
     }
@@ -68,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Asset.init({
+  Recipe_asset.init({
     name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -109,11 +113,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    isCover: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     sequelize,
-    modelName: 'asset',
+    modelName: 'recipe_asset',
   });
 
-  return Asset;
+  return Recipe_asset;
 };

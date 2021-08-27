@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Ingredient extends Model {
+  class Recipe_tag extends Model {
     constructor (data) {
       super(data);
       
@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       this.name = data.name;
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
+
+      this.recipe = data.recipe;
     }
 
     getId () {
@@ -25,24 +27,27 @@ module.exports = (sequelize, DataTypes) => {
     getUpdatedAt () {
       return this.updatedAt;
     }
-
     static associate(models) {
-      this.hasOne(models.recipe_ingredient, {
-        as: 'recipe_ingredients'
-      })
+      // define association here
+      this.belongsTo(models.recipe, {
+        as: 'recipe',
+        onDelete: 'CASCADE',
+        foreignKey: {
+          allowNull: false,
+          name: 'recipeId'
+        }
+      });
     }
   };
-
   
-  Ingredient.init({
+  Recipe_tag.init({
     name: {
       type: DataTypes.STRING,
-      allowNull: true
-    },
+    }
   }, {
     sequelize,
-    modelName: 'ingredient'
+    modelName: 'recipe_tag',
   });
 
-  return Ingredient;
+  return Recipe_tag;
 };
