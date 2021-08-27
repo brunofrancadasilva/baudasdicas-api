@@ -82,6 +82,10 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.recipe_tag, {
         as: 'tags'
       });
+
+      this.hasMany(models.recipe_nutrition, {
+        as: 'nutrition_facts'
+      });
     }
   };
 
