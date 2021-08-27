@@ -20,6 +20,15 @@ class Utils {
       token
     };
   }
+
+  diffArray (st, nd, comparator) {
+    return {
+      added: st.filter(stItem => !(nd.find(ndItem => comparator(stItem, ndItem)))),
+      removed: nd.filter(ndItem => !(st.find(stItem => comparator(stItem, ndItem)))),
+      kept: st.filter(stItem => (nd.find(ndItem => comparator(stItem, ndItem))))
+    };
+  }
+
 }
 
 module.exports = Utils;

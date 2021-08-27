@@ -3,8 +3,10 @@
 const path = require('path');
 const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
-const { sequelize, user: UserModel, asset: AssetModel, recipe: RecipeModel, ingredient: IngredientModel, step: StepModel } = require('./../models');
+const RecipeService = require('../services/business/recipeService');
+const { sequelize, asset: AssetModel, recipe: RecipeModel, recipe_ingredient: RecipeIngredient } = require('./../models');
 const StorageServiceClass = require('./../services/utilities/storageService');
+const IngredientService = require('../services/business/ingredientService');
 
 class Recipe extends BaseRoute {
   constructor () {
@@ -19,66 +21,52 @@ class Recipe extends BaseRoute {
   }
 
   async createRecipe (req) {
-    const { body: { name, description, additionalInfo, steps = [], ingredients = [] } } = req;
+    const { body: { name, description, servingTime, categoryId, tags = [], steps = [], ingredients = [] } } = req;
     const user = req.user;
     const transaction = await sequelize.transaction();
+    
+    // services
+    const recipeService = new RecipeService();
+    const ingredientService = new IngredientService();
 
     try {
+      // validation
       if (!steps.length || !ingredients.length) {
         throw new Error('You must provide at least one step and one ingredient');
       }
 
+      if (!categoryId) {
+        throw new Error('You must provide a category');
+      }
+
       // create recipe
-      const recipe = new RecipeModel({
-        name: name,
-        description: description,
-        additionalInfo: additionalInfo,
-        isArchived: false,
-        authorId: user.id
-      });
-      const savedRecipe = await recipe.save({ transaction });
+      const savedRecipe = await recipeService.createRecipe({
+        name,
+        description,
+        servingTime,
+        categoryId
+      }, user, transaction);
 
       // create steps
-      const mappedSteps = steps.map(step => {
-        if (!step.description || step.position === null || step.position === undefined) {
-          throw new Error('Invalid step properties');
-        }
-
-        return new StepModel({
-          description: step.description,
-          position: step.position,
-          recipeId: savedRecipe.id,
-        });
-      })
-      const savedSteps = await StepModel.bulkCreate(mappedSteps, {
-        transaction,
-        returning: true
-      });
+      await recipeService.handleRecipeSteps(steps, [], savedRecipe.id, transaction);
 
       // create ingredients
-      const mappedIngredients = ingredients.map(ingredient => {
-        if (!ingredient.description) {
-          throw new Error('Invalid ingredient payload');
-        }
-
-        return new IngredientModel({
-          description: ingredient.description,
-          optional: Boolean(ingredient.optional),
+      const dbIngredients = await ingredientService.handleDbIngredients(ingredients, transaction);
+      const mappedNewIngredients = dbIngredients.map(ingredient => {
+        return new RecipeIngredient({
           recipeId: savedRecipe.id,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit,
+          ingredientId: ingredient.id,
         });
       });
-      const savedIngredients = await IngredientModel.bulkCreate(mappedIngredients, { 
-        transaction,
-        returning: true
-      }); 
+      await recipeService.handleRecipeIngredients(mappedNewIngredients, [], savedRecipe.id, transaction);
+      
+      // create tags
+      await recipeService.handleRecipeTags(tags, [], savedRecipe.id, transaction);
 
       await transaction.commit();
-      return {
-        ...savedRecipe.dataValues,
-        steps: savedSteps,
-        ingredients: savedIngredients,
-        author: await savedRecipe.getAuthor({ scope: 'withoutPassword' })
-      };
+      return recipeService.getById(savedRecipe.id);
     } catch (e) {
       await transaction.rollback();
       throw e;
@@ -131,40 +119,9 @@ class Recipe extends BaseRoute {
 
   async getRecipeById (req) {
     const { params: { id: recipeId } } = req;
+    const recipeService = new RecipeService();
 
-    const recipe = await RecipeModel.findByPk(recipeId, {
-      include: [
-        {
-          model: IngredientModel,
-          as: 'ingredients',
-          required: false
-        },
-        {
-          model: StepModel,
-          as: 'steps',
-          required: false
-        },
-        {
-          model: AssetModel,
-          as: 'assets',
-          required: false
-        },
-        {
-          model: UserModel.scope('withoutPassword'),
-          as: 'author',
-          required: true,
-        }
-      ],
-      order: [[ { model: StepModel, as: 'steps'}, 'position', 'ASC' ]],
-    });
-
-    return {
-      ...recipe.dataValues,
-      ingredients: recipe.ingredients,
-      steps: recipe.steps,
-      assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
-      author: await recipe.getAuthor({ scope: 'withoutPassword' })
-    };
+    return recipeService.getById(recipeId);
   }
 }
 

@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Recipe_step extends Model {
+  class RecipeStep extends Model {
     constructor (data) {
       super(data);
 
@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Recipe_step.init({
+  RecipeStep.init({
     description: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -63,5 +63,5 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'recipe_step',
   });
 
-  return Recipe_step;
+  return RecipeStep;
 };
