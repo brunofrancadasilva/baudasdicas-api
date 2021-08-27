@@ -25,12 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     getUpdatedAt () {
       return this.updatedAt;
     }
-
-    static associate(models) {
-      this.hasOne(models.recipe_ingredient, {
-        as: 'recipe_ingredients'
-      })
-    }
   };
 
   

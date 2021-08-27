@@ -67,10 +67,6 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
 
-      this.hasMany(models.recipe_ingredient, {
-        as: 'ingredients'
-      });
-
       this.hasMany(models.recipe_step, {
         as: 'steps'
       });

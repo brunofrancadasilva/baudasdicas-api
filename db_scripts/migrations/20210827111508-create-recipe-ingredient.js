@@ -2,12 +2,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('recipe_ingredients', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       quantity: {
         type: Sequelize.FLOAT
       },
@@ -40,7 +34,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }).then(() => queryInterface.addIndex('recipe_ingredients', ['recipeId', 'ingredientId'], { unique: true }) );
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('recipe_ingredients');

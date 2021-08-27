@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     constructor (data) {
       super(data);
       
-      this.id = data.id;
       this.quantity = data.quantity;
       this.unit = data.unit;
       this.createdAt = data.createdAt;
@@ -17,9 +16,6 @@ module.exports = (sequelize, DataTypes) => {
       this.ingredient = data.ingredient;
     }
 
-    getId () {
-      return this.id;
-    }
     getQuantity () {
       return this.quantity;
     }
@@ -34,20 +30,21 @@ module.exports = (sequelize, DataTypes) => {
     }
     static associate(models) {
       // define association here
-      this.belongsTo(models.recipe, {
-        as: 'recipe',
-        onDelete: 'CASCADE',
+
+      models.recipe.belongsToMany(models.ingredient, {
+        as: 'ingredients',
+        through: this,
+        onDelete: 'cascade',
         foreignKey: {
-          allowNull: false,
           name: 'recipeId'
         }
       });
 
-      this.belongsTo(models.ingredient, {
-        as: 'ingredient',
-        onDelete: 'CASCADE',
+      models.ingredient.belongsToMany(models.recipe, {
+        as: 'recipes',
+        through: this,
+        onDelete: 'cascade',
         foreignKey: {
-          allowNull: false,
           name: 'ingredientId'
         }
       });
@@ -64,6 +61,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'recipe_ingredient',
+    indexes: [
+      {
+        unique: true,
+        fields: ['recipeId', 'ingredientId']
+      }
+    ]
   });
 
   return Recipe_ingredient;

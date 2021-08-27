@@ -4,7 +4,7 @@ const BaseRoute = require('./baseRoute');
 
 class External extends BaseRoute {
   constructor () {
-    super('External');
+    super('External', false);
 
     /* GET ROUTES */
     this.get('/health', this.handleHealthCheck.bind(this));
