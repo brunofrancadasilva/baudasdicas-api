@@ -18,6 +18,7 @@ class Category extends BaseRoute {
 
     /* GET ROUTES */
     this.get('/', this.getAll.bind(this));
+    this.get('/:id', this.getById.bind(this));
   }
 
   async createCategory (req) {
@@ -101,6 +102,36 @@ class Category extends BaseRoute {
         recipes: result.recipes
       };
     });
+  }
+
+  async getById (req) {
+    const { params: { id: categoryId } } = req; 
+
+    const category = await CategoryModel.findByPk(categoryId, {
+      include: [
+        {
+          model: RecipeModel,
+          as: 'recipes',
+          where: {
+            isArchived: false
+          },
+          include: [
+            {
+              model: IngredientModel,
+              as: 'ingredients',
+              through: {
+                model: RecipeIngredientModel
+              }
+            }
+          ]
+        }
+      ]
+    });
+
+    return {
+      ...category.dataValues,
+      recipes: category.recipes
+    };
   }
 }
 
