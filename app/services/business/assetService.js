@@ -24,7 +24,12 @@ class AssetService {
     if (!asset) {
       throw new Error('Asset not found');
     }
-    const assetUrl = await storageService.getPresignedUrl(asset.storageFileKey);
+    const assetUrl = await storageService.getPresignedUrl({
+      key: asset.storageFileKey,
+      filename: asset.name,
+      extension: asset.extension,
+      contentType: asset.contentType
+    });
 
     return {
       ...asset.dataValues,

@@ -1,5 +1,6 @@
 'use strict';
 
+const ContentDisposition = require('content-disposition');
 const S3Class = require('./../../modules/s3');
 const CONSTANTS = require('./../../config/constants');
 
@@ -35,11 +36,14 @@ class StorageService {
     });
   }
 
-  async getPresignedUrl (fileKey) {
+  async getPresignedUrl (options) {
     return this.s3.getSignedUrl('getObject', {
       Bucket: CONSTANTS.BUCKET_NAME,
-      Key: fileKey,
-      Expires: this.PRESIGNED_URL_EXPIRATION
+      Key: options.key,
+      Expires: this.PRESIGNED_URL_EXPIRATION,
+      ResponseContentDisposition: ContentDisposition(`${options.filename}${options.extension}`),
+      ResponseContentType: options.contentType,
+      ResponseCacheControl: 'no-cache, no-store'
     });
   }
 
