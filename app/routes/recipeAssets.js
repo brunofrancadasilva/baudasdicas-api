@@ -5,7 +5,7 @@ const AssetService = require('../services/business/assetService');
 
 class RecipeAssets extends BaseRoute {
   constructor () {
-    super('RecipeAssets', true);
+    super('RecipeAsset', true);
 
     /* GET ROUTES */
     this.get('/:id', this.getById.bind(this));
