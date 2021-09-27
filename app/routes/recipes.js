@@ -4,8 +4,8 @@ const path = require('path');
 const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
 const RecipeService = require('../services/business/recipeService');
-const { sequelize, asset: AssetModel, recipe: RecipeModel, recipe_ingredient: RecipeIngredient } = require('./../models');
-const StorageServiceClass = require('./../services/utilities/storageService');
+const { sequelize, recipe_asset: AssetModel, recipe: RecipeModel, recipe_ingredient: RecipeIngredient } = require('../models');
+const StorageServiceClass = require('../services/utilities/storageService');
 const IngredientService = require('../services/business/ingredientService');
 
 class Recipe extends BaseRoute {
@@ -77,7 +77,7 @@ class Recipe extends BaseRoute {
   }
 
   async attachAssets (req) {
-    const { params: { id: recipeId } } = req;
+    const { params: { id: recipeId }, user } = req;
 
     try {
       const uploadStreamHandler = async (file, recipe) => {

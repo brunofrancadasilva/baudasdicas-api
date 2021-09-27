@@ -1,7 +1,7 @@
 'use strict';
 
 const BaseRoute = require('./baseRoute');
-const { user: UserModel, recipe: RecipeModel, ingredient: IngredientModel, step: StepModel, asset: AssetModel } = require('./../models');
+const { user: UserModel, recipe: RecipeModel, ingredient: IngredientModel, step: StepModel, asset: AssetModel } = require('../models');
 
 class User extends BaseRoute {
   constructor () {

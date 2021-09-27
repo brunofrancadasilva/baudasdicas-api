@@ -1,7 +1,7 @@
 'use strict';
 
 const BaseRoute = require('./baseRoute');
-const { category: CategoryModel, recipe: RecipeModel, recipe_ingredient: RecipeIngredientModel, ingredient: IngredientModel } = require('./../models');
+const { category: CategoryModel, recipe: RecipeModel, recipe_ingredient: RecipeIngredientModel, ingredient: IngredientModel } = require('../models');
 
 class Category extends BaseRoute {
   constructor () {
