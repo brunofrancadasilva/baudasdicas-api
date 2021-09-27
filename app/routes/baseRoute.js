@@ -45,7 +45,9 @@ function apiHandlerWrapper (handler, httpSuccessCode) {
         res.status(successCode).json(response);
       }).catch(e => {
         console.error(e);
-        res.status(500).send('Internal Server Error');
+        
+        const message = e.message || 'Internal Server Error';
+        res.status(500).send(e.message);
       })
     } else {
       res.status(500).send('Request failed');

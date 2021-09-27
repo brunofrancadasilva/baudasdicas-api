@@ -6,7 +6,7 @@ const UtilsClass = require('./../services/utilities/utils');
 
 class Authentication extends BaseRoute {
   constructor () {
-    super('Authentication');
+    super('Authentication', false);
 
     /* POST ROUTES */
     this.post('/signin', this.handleUserSignIn.bind(this));
@@ -17,6 +17,10 @@ class Authentication extends BaseRoute {
     const { body: { email, password } } = req;
     const Utils = new UtilsClass();
 
+    if (!email || !password) {
+      throw new Error('Missing email or password');
+    }
+    
     const user = await UserModel.findOne({
       where: {
         email
