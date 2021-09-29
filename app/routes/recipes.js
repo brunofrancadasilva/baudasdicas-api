@@ -20,6 +20,7 @@ class Recipe extends BaseRoute {
     this.put('/:id/cover', this.setRecipeCover.bind(this));
 
     /* GET Routes */
+    this.get('/', this.getAllRecipes.bind(this));
     this.get('/:id', this.getRecipeById.bind(this));
   }
 
@@ -172,6 +173,12 @@ class Recipe extends BaseRoute {
     const recipeService = new RecipeService();
 
     return recipeService.getById(recipeId);
+  }
+
+  async getAllRecipes () {
+    const recipeService = new RecipeService();
+
+    return recipeService.getAll();
   }
 }
 

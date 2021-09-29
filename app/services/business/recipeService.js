@@ -162,6 +162,53 @@ class RecipeService {
       author: await recipe.getAuthor({ scope: 'withoutPassword' })
     };
   }
+
+  async getAll () {
+    const recipes = await RecipeModel.findAll({
+      include: [
+        {
+          model: IngredientModel,
+          as: 'ingredients',
+          required: false,
+          through: {
+            model: RecipeIngredientModel
+          }
+        },
+        {
+          model: StepModel,
+          as: 'steps',
+          required: false
+        },
+        {
+          model: AssetModel,
+          as: 'assets',
+          required: false
+        },
+        {
+          model: RecipeTagModel,
+          as: 'tags',
+          required: false
+        },
+        {
+          model: UserModel.scope('withoutPassword'),
+          as: 'author',
+          required: true,
+        }
+      ],
+      order: [[ { model: StepModel, as: 'steps'}, 'position', 'ASC' ]],
+    });
+
+    return Promise.all(recipes.map(async recipe => {
+      return {
+        ...recipe.dataValues,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        tags: recipe.tags && Array.isArray(recipe.tags) && !recipe.tags[0].id ? [] : recipe.tags,
+        assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
+        author: await recipe.getAuthor({ scope: 'withoutPassword' })
+      };
+    }));
+  }
 }
 
 module.exports = RecipeService;
