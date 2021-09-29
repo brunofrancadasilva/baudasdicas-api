@@ -111,6 +111,10 @@ class Recipe extends BaseRoute {
         throw new Error('Recipe not found');
       }
 
+      if (recipe.authorId !== user.id) {
+        throw new Error('You are not the author of this recipe');
+      }
+
       const uploadedAssets = await this.getFilesAndUploadToStorage(req, uploadStreamHandler, [recipe]);
 
       return {

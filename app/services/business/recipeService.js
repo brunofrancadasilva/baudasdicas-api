@@ -165,6 +165,9 @@ class RecipeService {
 
   async getAll () {
     const recipes = await RecipeModel.findAll({
+      where: {
+        isArchived: false
+      },
       include: [
         {
           model: IngredientModel,
@@ -195,7 +198,7 @@ class RecipeService {
           required: true,
         }
       ],
-      order: [[ { model: StepModel, as: 'steps'}, 'position', 'ASC' ]],
+      order: [['id', 'DESC'], [ { model: StepModel, as: 'steps'}, 'position', 'ASC' ]],
     });
 
     return Promise.all(recipes.map(async recipe => {
