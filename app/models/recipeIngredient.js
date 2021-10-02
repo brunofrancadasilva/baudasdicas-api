@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Recipe_ingredient extends Model {
+  class RecipeIngredient extends Model {
     constructor (data) {
       super(data);
       
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   
-  Recipe_ingredient.init({
+  RecipeIngredient.init({
     quantity: {
       type: DataTypes.FLOAT,
     },
@@ -69,5 +69,5 @@ module.exports = (sequelize, DataTypes) => {
     ]
   });
 
-  return Recipe_ingredient;
+  return RecipeIngredient;
 };

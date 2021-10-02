@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
 
       this.recipes = data.recipes;
       this.assets = data.assets;
+      this.temporary_files = data.temporary_files;
     }
 
     getId () {
@@ -58,6 +59,10 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.recipe, {
         as: 'recipes',
         foreignKey: 'authorId'
+      });
+
+      this.hasMany(models.temporary_file, {
+        as: 'temporary_files'
       });
     }
   }

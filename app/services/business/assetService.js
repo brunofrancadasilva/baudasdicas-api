@@ -31,10 +31,7 @@ class AssetService {
       contentType: asset.contentType
     });
 
-    return {
-      ...asset.dataValues,
-      url: assetUrl
-    };
+    return assetUrl;
   }
 }
 

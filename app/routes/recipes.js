@@ -5,7 +5,6 @@ const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
 const RecipeService = require('../services/business/recipeService');
 const { sequelize, recipe_asset: AssetModel, recipe: RecipeModel, recipe_ingredient: RecipeIngredient } = require('../models');
-const StorageServiceClass = require('../services/utilities/storageService');
 const IngredientService = require('../services/business/ingredientService');
 
 class Recipe extends BaseRoute {
@@ -78,50 +77,32 @@ class Recipe extends BaseRoute {
   }
 
   async attachAssets (req) {
-    const { params: { id: recipeId }, user } = req;
+    const { body: { assets = [] }, params: { id }, user } = req;
+    const recipeService = new RecipeService();
+    const transaction = await sequelize.transaction();
 
     try {
-      const uploadStreamHandler = async (file, recipe) => {
-        const { fileStream, filename, mimetype } = file;
-        const StorageService = new StorageServiceClass();
-        const assetKey = `${user.id}/${new Date().getTime()}-${nanoid()}`;
+      if (!assets.length) {
+        return;
+      }
 
-        return StorageService.uploadFile(assetKey, fileStream)
-          .then(async () => {
-            const metadata = await StorageService.getMetadata(assetKey);
-            
-            const asset = new AssetModel({
-              name: path.parse(filename).name,
-              size: metadata.ContentLength,
-              extension: path.extname(filename),
-              contentType: mimetype,
-              storageFileKey: assetKey,
-              isArchived: false,
-              recipeId: recipe.id,
-              isCover: false
-            });
-
-            return asset.save();
-          });
-      };
-
-      const recipe = await RecipeModel.findByPk(recipeId);
+      const recipe = await RecipeModel.findOne({
+        where: {
+          id,
+          authorId: user.id
+        }
+      });
 
       if (!recipe) {
         throw new Error('Recipe not found');
       }
 
-      if (recipe.authorId !== user.id) {
-        throw new Error('You are not the author of this recipe');
-      }
+      const savedAssets = await recipeService.attachAssets(assets, recipe, user, transaction);
+      await transaction.commit();
 
-      const uploadedAssets = await this.getFilesAndUploadToStorage(req, uploadStreamHandler, [recipe]);
-
-      return {
-        recipe,
-        assets: uploadedAssets
-      };
+      return savedAssets;
     } catch (e) {
+      await transaction.rollback();
       throw e;
     }
   }

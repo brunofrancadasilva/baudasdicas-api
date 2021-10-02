@@ -23,9 +23,13 @@ class RecipeAssets extends BaseRoute {
     const { params: { id } } = req;
     const assetService = new AssetService();
 
-    const asset = await assetService.getDownloadUrl(id);
+    const assetUrl = await assetService.getDownloadUrl(id);
 
-    res.redirect(307, asset.url);
+    if (!assetUrl) {
+      res.status(404).end();
+    } else {
+      res.redirect(307, assetUrl);
+    }
   }
 }
 

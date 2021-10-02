@@ -69,6 +69,17 @@ class StorageService {
       Bucket: CONSTANTS.BUCKET_NAME
     }).promise();
   }
+
+  async copy (options) {
+    const params = {
+      Key: options.destination,
+      Bucket: CONSTANTS.BUCKET_NAME,
+      CopySource: `/${CONSTANTS.BUCKET_NAME}/${options.source}`,
+      MetadataDirective: 'COPY'
+    };
+
+    return this.s3.copyObject(params).promise();
+  }
 }
 
 module.exports = StorageService;

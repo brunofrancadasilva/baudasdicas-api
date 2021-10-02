@@ -1,7 +1,8 @@
 'use strict';
 
-const { user: UserModel, recipe: RecipeModel, recipe_tag: RecipeTagModel, recipe_asset: AssetModel, recipe_step: StepModel, recipe_ingredient: RecipeIngredientModel, ingredient: IngredientModel } = require('./../../models');
+const { Sequelize: { Op }, user: UserModel, recipe: RecipeModel, recipe_tag: RecipeTagModel, recipe_asset: AssetModel, recipe_step: StepModel, recipe_ingredient: RecipeIngredientModel, ingredient: IngredientModel, temporary_file: TemporaryFileModel } = require('./../../models');
 const Utils = require('./../utilities/utils');
+const StorageService = require('../utilities/storageService');
 
 class RecipeService {
   constructor () {}
@@ -211,6 +212,41 @@ class RecipeService {
         author: await recipe.getAuthor({ scope: 'withoutPassword' })
       };
     }));
+  }
+
+  async attachAssets (assets, recipe, user, transaction) {
+    const storageService = new StorageService();
+    const tempFiles = await TemporaryFileModel.findAll({
+      where: {
+        storageFileKey: {
+          [Op.in]: assets
+        },
+        userId: user.id
+      }
+    });
+
+    const promises = tempFiles.map(async tempFile => {
+      const newS3Key = tempFile.storageFileKey.replace('/TEMP', '');
+      const copy = await storageService.copy({
+        destination: newS3Key,
+        source: tempFile.storageFileKey
+      });
+
+      const newAsset = new AssetModel({
+        ...tempFile.dataValues,
+        storageFileKey: newS3Key,
+        isCover: false,
+        isArchived: false,
+        recipeId: recipe.id
+      });
+
+      const savedAsset = await newAsset.save({ transaction });
+      await tempFile.destroy({ transaction });
+
+      return savedAsset;
+    });
+
+    return Promise.all(promises);
   }
 }
 

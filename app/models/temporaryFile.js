@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class RecipeAsset extends Model {
+  class TemporaryFile extends Model {
     constructor (data) {
       super(data);
 
@@ -16,11 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       this.thumbnailContentType = data.thumbnailContentType;
       this.thumbnailSize = data.thumbnailSize;
       this.thumbnailExtension = data.thumbnailExtension;
-      this.isArchived = data.isArchived;
-      this.isCover = data.isCover;
-      this.recipeId = data.recipeId;
+      this.userId = data.userId;
 
-      this.recipe = data.recipe;
+      this.user = data.user;
     }
 
     getName () {
@@ -50,29 +48,20 @@ module.exports = (sequelize, DataTypes) => {
     getThumbnailExtension () {
       return this.thumbnailExtension;
     }
-    getIsArchived () {
-      return this.isArchived;
-    }
-    getIsCover () {
-      return this.isCover;
-    }
-    getRecipeId () {
-      return this.recipeId;
-    }
 
     static associate(models) {
-      this.belongsTo(models.recipe, {
+      this.belongsTo(models.user, {
         foreignKey: {
           allowNull: false,
-          name: 'recipeId'
+          name: 'userId'
         },
         onDelete: 'CASCADE',
-        as: 'recipe'
+        as: 'user'
       });
     }
   };
 
-  RecipeAsset.init({
+  TemporaryFile.init({
     name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -108,21 +97,11 @@ module.exports = (sequelize, DataTypes) => {
     thumbnailExtension: {
       type: DataTypes.STRING,
       allowNull: true
-    },
-    isArchived: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
-    },
-    isCover: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
     }
   }, {
     sequelize,
-    modelName: 'recipe_asset',
+    modelName: 'temporary_file',
   });
 
-  return RecipeAsset;
+  return TemporaryFile;
 };
