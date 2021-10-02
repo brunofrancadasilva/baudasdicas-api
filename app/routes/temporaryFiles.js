@@ -6,7 +6,7 @@ const StorageServiceClass = require('../services/utilities/storageService');
 
 class RecipeAssets extends BaseRoute {
   constructor () {
-    super('TemporaryFiles', true);
+    super('TemporaryFile', true);
 
     /* POST ROUTES */
     this.post('/', this.upload.bind(this));
