@@ -233,13 +233,19 @@ class RecipeService {
       });
 
       const newRecipeAsset = new AssetModel({
-        ...tempFile.dataValues,
+        name: tempFile.name,
+        size: tempFile.size,
+        contentType: tempFile.contentType,
+        extension: tempFile.extension,
+        thumbnailFileKey: tempFile.thumbnailFileKey,
+        thumbnailContentType: tempFile.thumbnailContentType,
+        thumbnailSize: tempFile.thumbnailSize,
+        thumbnailExtension: tempFile.thumbnailExtension,
         storageFileKey: newS3Key,
         isCover: false,
         isArchived: false,
         recipeId: recipe.id
       });
-      newRecipeAsset.setId(null);
 
       const savedAsset = await newRecipeAsset.save({ transaction });
       await tempFile.destroy({ transaction });
