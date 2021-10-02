@@ -232,15 +232,16 @@ class RecipeService {
         source: tempFile.storageFileKey
       });
 
-      const newAsset = new AssetModel({
+      const newRecipeAsset = new AssetModel({
         ...tempFile.dataValues,
         storageFileKey: newS3Key,
         isCover: false,
         isArchived: false,
         recipeId: recipe.id
       });
+      newRecipeAsset.setId(null);
 
-      const savedAsset = await newAsset.save({ transaction });
+      const savedAsset = await newRecipeAsset.save({ transaction });
       await tempFile.destroy({ transaction });
 
       return savedAsset;
