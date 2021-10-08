@@ -26,6 +26,10 @@ class IngredientService {
       })
     ];
   }
+
+  getAll () {
+    return IngredientModel.findAll();
+  }
 }
 
 module.exports = IngredientService;
