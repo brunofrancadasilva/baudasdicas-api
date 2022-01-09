@@ -12,7 +12,17 @@ module.exports = (sequelize, DataTypes) => {
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
 
-      this.recipes = data.recipes;
+      if (Array.isArray(data.recipes)) {
+        this.recipes = data.recipes.reduce((arr, recipe) => {
+          if (recipe && recipe.id) {
+            arr.push(recipe);
+          }
+
+          return arr;
+        }, []);
+      } else {
+        this.recipe = data.recipes;
+      }
     }
     static associate(models) {
       this.hasMany(models.recipe, {

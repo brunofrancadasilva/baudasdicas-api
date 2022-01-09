@@ -78,6 +78,7 @@ class Category extends BaseRoute {
     const results = await CategoryModel.findAll({
       include: [
         {
+          required: false,
           model: RecipeModel,
           as: 'recipes',
           where: {
@@ -110,6 +111,7 @@ class Category extends BaseRoute {
     const category = await CategoryModel.findByPk(categoryId, {
       include: [
         {
+          required: false,
           model: RecipeModel,
           as: 'recipes',
           where: {
@@ -117,6 +119,7 @@ class Category extends BaseRoute {
           },
           include: [
             {
+              required: false,
               model: IngredientModel,
               as: 'ingredients',
               through: {
@@ -127,6 +130,10 @@ class Category extends BaseRoute {
         }
       ]
     });
+
+    if (!category) {
+      return null;
+    }
 
     return {
       ...category.dataValues,
