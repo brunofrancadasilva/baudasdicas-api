@@ -23,17 +23,19 @@ class RecipeAssets extends BaseRoute {
   }
 
   async getByUuid (req) {
-    const { params: { uuid } } = req;
+    const { params: { uuid }, user } = req;
     const temporaryFileService = new TemporaryFileService();
 
-    return temporaryFileService.getByUuid(id);
+    const fileUuid = `${user.id}/TEMP/${uuid}`;
+    return temporaryFileService.getByUuid(fileUuid);
   }
 
   async downloadByUuid (req, res) {
-    const { params: { uuid } } = req;
+    const { params: { uuid }, user } = req;
     const temporaryFileService = new TemporaryFileService();
 
-    const assetUrl = await temporaryFileService.getDownloadUrl(uuid);
+    const fileUuid = `${user.id}/TEMP/${uuid}`;
+    const assetUrl = await temporaryFileService.getDownloadUrl(fileUuid);
 
     if (!assetUrl) {
       res.status(404).end();

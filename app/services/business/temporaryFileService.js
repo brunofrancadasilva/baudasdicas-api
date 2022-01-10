@@ -46,7 +46,7 @@ class AssetService {
     if (!assetUuid) {
       throw new Error('Asset Id is required');
     }
-    const storageService = new StorageService();
+    const storageService = new StorageServiceClass();
     const asset = await this.getByUuid(assetUuid);
 
     if (!asset) {
