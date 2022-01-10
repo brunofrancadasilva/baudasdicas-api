@@ -4,6 +4,14 @@ const { ingredient: IngredientModel } = require('./../../models');
 class IngredientService {
   constructor () {}
 
+  standardizeUtf8IngredientName (ingredientName) {
+    if (!ingredientName) {
+      throw new Error('Ingredient name is required');
+    }
+    
+    return ingredientName.replace(/ /g, '-').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   // { id: null || 1, name: 'Chocolate', quantity: '1', unit: 'cup' }
   async handleDbIngredients (ingredients = [], transaction) {
     const newIngredients = ingredients.filter(ing => !ing.id).map(ing => {
