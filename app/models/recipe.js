@@ -1,8 +1,10 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+const ModelUtilsClass = require('../services/utilities/modelUtils');
+const ModelUtils = new ModelUtilsClass();
+
 module.exports = (sequelize, DataTypes) => {
+
   class Recipe extends Model {
     constructor (data) {
       super(data);
@@ -17,11 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       this.updatedAt = data.updatedAt;
 
       this.author = data.author;
-      this.steps = data.steps;
-      this.assets = data.assets;
-      this.ingredients = data.ingredients;
-      this.category = data.category;
-      this.tags = data.tags;
+      this.steps = ModelUtils.standardizeArrayData(data.steps);
+      this.assets = ModelUtils.standardizeArrayData(data.assets);
+      this.category = ModelUtils.standardizeArrayData(data.category);
+      this.ingredients = ModelUtils.standardizeArrayData(data.ingredients);
+      this.tags = ModelUtils.standardizeArrayData(data.tags);
     }
     
     getId () {

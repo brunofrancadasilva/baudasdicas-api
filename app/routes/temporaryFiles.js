@@ -2,7 +2,6 @@
 
 const BaseRoute = require('./baseRoute');
 const TemporaryFileService = require('../services/business/temporaryFileService');
-const StorageServiceClass = require('../services/utilities/storageService');
 
 class RecipeAssets extends BaseRoute {
   constructor () {
