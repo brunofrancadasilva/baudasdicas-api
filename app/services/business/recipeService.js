@@ -158,8 +158,8 @@ class RecipeService {
       ...recipe.dataValues,
       ingredients: recipe.ingredients,
       steps: recipe.steps,
-      tags: recipe.tags && Array.isArray(recipe.tags) && !recipe.tags[0].id ? [] : recipe.tags,
-      assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
+      tags: recipe.tags,
+      assets: recipe.assets,
       author: await recipe.getAuthor({ scope: 'withoutPassword' })
     };
   }
@@ -207,8 +207,8 @@ class RecipeService {
         ...recipe.dataValues,
         ingredients: recipe.ingredients,
         steps: recipe.steps,
-        tags: recipe.tags && Array.isArray(recipe.tags) && !recipe.tags[0].id ? [] : recipe.tags,
-        assets: recipe.assets && Array.isArray(recipe.assets) && !recipe.assets[0].id ? [] : recipe.assets,
+        tags: recipe.tags,
+        assets: recipe.assets,
         author: await recipe.getAuthor({ scope: 'withoutPassword' })
       };
     }));
@@ -227,7 +227,7 @@ class RecipeService {
 
     const promises = tempFiles.map(async tempFile => {
       const newS3Key = tempFile.storageFileKey.replace('/TEMP', '');
-      const copy = await storageService.copy({
+      await storageService.copy({
         destination: newS3Key,
         source: tempFile.storageFileKey
       });

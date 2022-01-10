@@ -52,6 +52,7 @@ class AssetService {
     if (!asset) {
       throw new Error('File not found');
     }
+    
     const assetUrl = await storageService.getPresignedUrl({
       key: asset.storageFileKey,
       filename: asset.name,

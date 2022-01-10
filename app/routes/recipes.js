@@ -1,7 +1,5 @@
 'use strict';
 
-const path = require('path');
-const { nanoid } = require('nanoid');
 const BaseRoute = require('./baseRoute');
 const RecipeService = require('../services/business/recipeService');
 const { sequelize, recipe_asset: AssetModel, recipe: RecipeModel, recipe_ingredient: RecipeIngredient } = require('../models');
@@ -128,7 +126,8 @@ class Recipe extends BaseRoute {
       }
 
       await AssetModel.update({
-        isCover: false
+        isCover: false,
+        isArchived: false
       }, {
         where: {
           recipeId
@@ -137,7 +136,8 @@ class Recipe extends BaseRoute {
       });
 
       await AssetModel.update({
-        isCover: true
+        isCover: true,
+        isArchived: false
       }, {
         where: {
           recipeId,
