@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       
       this.id = data.id;
       this.name = data.name;
+      this.standardName = data.standardName;
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
     }
@@ -18,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     }
     getName () {
       return this.name;
+    }
+    getStandardName () {
+      return this.standardName;
     }
     getCreatedAt () {
       return this.createdAt;
@@ -33,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    standardName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    }
   }, {
     sequelize,
     modelName: 'ingredient'

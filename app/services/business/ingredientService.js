@@ -1,21 +1,56 @@
 'use strict';
 
-const { ingredient: IngredientModel } = require('./../../models');
+const { sequelize, ingredient: IngredientModel } = require('./../../models');
 class IngredientService {
   constructor () {}
 
+  standardizeUtf8IngredientName (ingredientName) {
+    if (!ingredientName) {
+      throw new Error('Ingredient name is required');
+    }
+    
+    return ingredientName.replace(/ /g, '-').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  checkIfIngredientExists (ingredientStandardName) {
+    return IngredientModel.findOne({
+      where: {
+        standardName: ingredientStandardName
+      }
+    });
+  }
+
   // { id: null || 1, name: 'Chocolate', quantity: '1', unit: 'cup' }
   async handleDbIngredients (ingredients = [], transaction) {
-    const newIngredients = ingredients.filter(ing => !ing.id).map(ing => {
-      return new IngredientModel({
-        name: ing.name
-      });
+    const mappedIngredients = ingredients.map(ing => {
+      return {
+        ...ing,
+        standardName: this.standardizeUtf8IngredientName(ing.name)
+      };
     });
 
-    const createdIngredients = await IngredientModel.bulkCreate(newIngredients, { transaction, returning: true });
+    const existingIngredients = mappedIngredients.filter(ing => ing.id);
+    const nonExistingIngredients = mappedIngredients.filter(ing => !ing.id);
     
+    const ingredientsToCreatePromises = nonExistingIngredients.map(async ing => {
+      const dbIngredient = await this.checkIfIngredientExists(ing.standardName);
+
+      if (dbIngredient) {
+        existingIngredients.push({
+          ...ing,
+          id: dbIngredient.id
+        });
+
+        return null;
+      }
+
+      return ing;
+    });
+    const ingredientsToCreate = (await Promise.all(ingredientsToCreatePromises)).filter(Boolean);
+    const createdIngredients = await IngredientModel.bulkCreate(ingredientsToCreate, { transaction, returning: true });
+
     return [
-      ...ingredients.filter(ing => ing.id),
+      ...existingIngredients,
       ...createdIngredients.map(ing => {
         return {
           id: ing.id,
