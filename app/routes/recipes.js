@@ -64,7 +64,8 @@ class Recipe extends BaseRoute {
       await recipeService.handleRecipeIngredients(mappedNewIngredients, [], savedRecipe.id, transaction);
       
       // create tags
-      await recipeService.handleRecipeTags(tags, [], savedRecipe.id, transaction);
+      const newTags = tags.filter(tag => tag.name);
+      await recipeService.handleRecipeTags(newTags, [], savedRecipe.id, transaction);
 
       await transaction.commit();
       return recipeService.getById(savedRecipe.id);
